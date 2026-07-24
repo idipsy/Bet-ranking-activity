@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>按流水模式 · 综合原型（后台 + 客户端）</title>
 <style>
-  * { box-sizing:border-box; }
   html, body { margin:0; padding:0; height:100%; font-family:"PingFang SC","Microsoft YaHei",Arial,sans-serif; }
   .app-shell { display:flex; height:100vh; overflow:hidden; }
 
@@ -26,8 +25,139 @@
 
   .sidebar-footer { padding:14px 20px; border-top:1px solid rgba(255,255,255,.1); font-size:11px; color:rgba(255,255,255,.4); line-height:1.7; }
 
-  .content { flex:1; min-width:0; height:100%; background:#eef1f6; }
-  .content iframe { width:100%; height:100%; border:none; display:block; }
+  .content { flex:1; min-width:0; height:100%; overflow:auto; background:#eef1f6; }
+  .panel { display:none; }
+  .panel.active { display:block; }
+
+* { box-sizing: border-box; }
+  #panel-admin { margin:0; padding:24px; background:#f0f2f5; font-family:"PingFang SC","Microsoft YaHei",Arial,sans-serif; color:#303133; font-size:14px; }
+  #panel-admin .modal { max-width:1560px; margin:0 auto; background:#fff; border:1px solid #e4e7ed; border-radius:4px; }
+  #panel-admin .modal-header { display:flex; justify-content:space-between; align-items:center; padding:16px 24px; border-bottom:1px solid #ebeef5; font-size:16px; font-weight:600; }
+  #panel-admin .modal-header .close { cursor:pointer; color:#909399; font-size:18px; }
+  #panel-admin .modal-body { padding:20px 24px 32px; }
+  #panel-admin .tabs { display:flex; gap:32px; border-bottom:1px solid #ebeef5; margin-bottom:20px; }
+  #panel-admin .tabs span { padding:10px 2px; cursor:pointer; color:#606266; }
+  #panel-admin .tabs span.active { color:#1677ff; border-bottom:2px solid #1677ff; font-weight:500; }
+  #panel-admin .columns { display:flex; gap:40px; align-items:flex-start; }
+  #panel-admin .col-left { flex:1.35; min-width:0; }
+  #panel-admin .col-right { flex:1; min-width:0; border-left:1px dashed #e4e7ed; padding-left:40px; }
+  #panel-admin h3.section-title { font-size:14px; font-weight:600; margin:0 0 16px; }
+  #panel-admin .field { display:flex; align-items:flex-start; margin-bottom:16px; gap:12px; }
+  #panel-admin .field > label { width:150px; flex:none; text-align:right; color:#606266; padding-top:7px; font-size:13px; }
+  #panel-admin .field > label .req { color:#f56c6c; margin-right:2px; }
+  #panel-admin .field .control { flex:1; min-width:0; }
+  #panel-admin input[type=text], #panel-admin input[type=number], #panel-admin select, #panel-admin textarea {
+    height:32px; border:1px solid #dcdfe6; border-radius:4px; padding:0 10px; font-size:13px; color:#303133; width:100%; background:#fff;
+  }
+  #panel-admin input:disabled, #panel-admin select:disabled { background:#f5f7fa; color:#c0c4cc; }
+  #panel-admin textarea { height:auto; padding:8px 10px; line-height:1.5; resize:vertical; }
+  #panel-admin .hint { color:#c0c4cc; font-size:12px; margin-left:8px; white-space:nowrap; }
+  #panel-admin .inline-row { display:flex; align-items:center; gap:8px; }
+  #panel-admin .radio-group label { margin-right:24px; color:#303133; cursor:pointer; }
+  #panel-admin .radio-group input { margin-right:6px; vertical-align:-2px; }
+  #panel-admin .change-banner { display:flex; align-items:center; gap:8px; border:1px solid #d9a765; background:#fdf8ef; color:#8a5a2b; padding:10px 14px; border-radius:4px; cursor:pointer; font-size:13px; margin-bottom:20px; user-select:none; }
+  #panel-admin .change-banner:hover { background:#fbf1de; }
+  #panel-admin .change-banner-arrow { display:inline-block; font-size:11px; transition:transform .15s ease; transform:rotate(0deg); }
+  #panel-admin .change-banner.open .change-banner-arrow { transform:rotate(90deg); }
+  #panel-admin .change-banner-title { font-weight:600; }
+  #panel-admin .change-banner-sub { color:#b08a55; }
+  #panel-admin .change-banner-panel { display:none; margin:-8px 0 20px; padding:12px 16px; background:#fdf8ef; border:1px solid #d9a765; border-top:none; border-radius:0 0 4px 4px; font-size:12.5px; color:#7a5a34; line-height:1.9; }
+  #panel-admin .change-banner-panel ul { margin:0; padding-left:18px; }
+  #panel-admin .new-tag { display:inline-block; background:#1677ff; color:#fff; font-size:10px; font-weight:600; padding:1px 6px; border-radius:3px; vertical-align:2px; letter-spacing:.3px; }
+  #panel-admin .rule-table-wrap { border:1px solid #dcdfe6; border-radius:6px; padding:14px; }
+  #panel-admin .rule-table-actions { display:flex; justify-content:flex-end; gap:8px; margin-bottom:10px; }
+  #panel-admin .icon-btn { width:26px; height:26px; border-radius:50%; border:none; color:#fff; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  #panel-admin .icon-btn.add { background:#1677ff; }
+  #panel-admin .icon-btn.del { background:#f56c6c; }
+  #panel-admin table.rule-table { width:100%; border-collapse:collapse; table-layout:fixed; }
+  #panel-admin table.rule-table th { background:#fafafa; border:1px solid #ebeef5; padding:8px; font-weight:500; color:#606266; font-size:12.5px; text-align:left; }
+  #panel-admin table.rule-table td { border:1px solid #ebeef5; padding:6px 8px; }
+  #panel-admin table.rule-table input[type=number] { width:100%; }
+  #panel-admin .tier-cell { display:flex; align-items:center; gap:6px; }
+  #panel-admin .ge-symbol { color:#909399; font-size:13px; }
+  #panel-admin .editor-toolbar { border:1px solid #dcdfe6; border-bottom:none; padding:6px 8px; color:#909399; font-size:12px; border-radius:4px 4px 0 0; }
+  #panel-admin .editor-body { border:1px solid #dcdfe6; border-top:none; border-radius:0 0 4px 4px; min-height:110px; padding:10px; color:#c0c4cc; font-size:13px; }
+  #panel-admin .divider { border:none; border-top:1px dashed #e4e7ed; margin:20px 0; }
+
+  #panel-client { margin:0; padding:32px 16px; background:#eef1f6; font-family:"PingFang SC","Microsoft YaHei",Arial,sans-serif; color:#303133; }
+  #panel-client .mode-caption { max-width:1200px; margin:0 auto 20px; font-size:12px; color:#8a94a6; display:flex; align-items:center; gap:6px; justify-content:center; }
+  #panel-client .mode-caption .new-tag { display:inline-block; background:#1677ff; color:#fff; font-size:10px; font-weight:600; padding:1px 6px; border-radius:3px; }
+  #panel-client .change-banner { max-width:1200px; margin:0 auto 20px; display:flex; align-items:center; gap:8px; border:1px solid #d9a765; background:#fdf8ef; color:#8a5a2b; padding:10px 14px; border-radius:4px; cursor:pointer; font-size:13px; user-select:none; }
+  #panel-client .change-banner:hover { background:#fbf1de; }
+  #panel-client .change-banner-arrow { display:inline-block; font-size:11px; transition:transform .15s ease; }
+  #panel-client .change-banner-title { font-weight:600; }
+  #panel-client .change-banner-sub { color:#b08a55; }
+  #panel-client .change-banner-panel { display:none; max-width:1200px; margin:-8px auto 20px; padding:12px 16px; background:#fdf8ef; border:1px solid #d9a765; border-top:none; border-radius:0 0 4px 4px; font-size:12.5px; color:#7a5a34; line-height:1.9; }
+  #panel-client .change-banner-panel ul { margin:0; padding-left:18px; }
+  #panel-client .change-banner-panel li.todo { color:#996633; }
+  #panel-client .change-banner-panel li.todo b { color:#8a5a2b; }
+  #panel-client .compare-wrap { display:flex; gap:32px; justify-content:center; align-items:flex-start; flex-wrap:wrap; }
+  #panel-client .device-col { display:flex; flex-direction:column; align-items:center; gap:10px; }
+  #panel-client .device-label { font-size:13px; font-weight:600; color:#42566b; }
+  #panel-client .browser-frame { width:760px; max-width:92vw; background:#e3e6ec; border-radius:10px; padding-bottom:14px; box-shadow:0 4px 20px rgba(0,0,0,.08); }
+  #panel-client .browser-bar { display:flex; align-items:center; gap:6px; padding:10px 14px; }
+  #panel-client .browser-bar .dot { width:9px; height:9px; border-radius:50%; background:#c7cbd4; display:inline-block; }
+  #panel-client .browser-bar .addr { flex:1; margin-left:8px; height:20px; border-radius:10px; background:#fff; }
+  #panel-client .browser-frame .page { margin:0 14px; max-width:none; box-shadow:none; }
+  #panel-client .phone-frame { width:375px; max-width:92vw; background:#1c1f26; border-radius:34px; padding:14px 10px; box-shadow:0 6px 24px rgba(0,0,0,.15); position:relative; }
+  #panel-client .phone-notch { position:absolute; top:14px; left:50%; transform:translateX(-50%); width:120px; height:20px; background:#1c1f26; border-radius:0 0 14px 14px; z-index:2; }
+  #panel-client .phone-frame .page { max-width:none; border-radius:22px; overflow:hidden; }
+  #panel-client .page { background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,.06); }
+  #panel-client .nav-bar { display:flex; align-items:center; padding:14px 16px; background:#fff; border-bottom:1px solid #f0f2f5; }
+  #panel-client .nav-back { font-size:20px; color:#303133; width:24px; line-height:1; }
+  #panel-client .nav-title { flex:1; text-align:center; font-size:15px; font-weight:600; color:#303133; margin-right:24px; }
+  #panel-client .nav-icons { display:flex; gap:6px; }
+  #panel-client .nav-icon-dot { width:22px; height:16px; border-radius:4px; background:#e4e7ed; }
+  #panel-client .nav-bar.pc .nav-title { margin-right:0; }
+  #panel-client .hero { position:relative; background:linear-gradient(135deg,#2b62e8,#4f8ef7); color:#fff; padding:28px 24px 22px; overflow:hidden; }
+  #panel-client .hero-badge { position:absolute; right:-30px; top:-30px; width:220px; height:220px; border-radius:50%; background:rgba(255,255,255,.08); }
+  #panel-client .hero-title { position:relative; font-size:22px; font-weight:700; line-height:1.5; margin:0 0 10px; max-width:420px; }
+  #panel-client .hero-desc { position:relative; font-size:13px; line-height:1.8; color:rgba(255,255,255,.9); max-width:460px; margin:0 0 6px; }
+  #panel-client .hero-meta { position:relative; font-size:12px; line-height:1.8; color:rgba(255,255,255,.75); max-width:460px; }
+  #panel-client .hero-meta b { color:#fff; font-weight:500; }
+  #panel-client .status-text { padding:16px 24px 4px; font-size:13.5px; line-height:1.8; color:#42566b; }
+  #panel-client .status-text b { color:#1677ff; }
+  #panel-client .claim-card { margin:14px 24px 0; background:#f5f8ff; border:1px solid #e1eaff; border-radius:10px; padding:16px 18px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+  #panel-client .claim-card-text { font-size:13px; color:#606266; line-height:1.7; }
+  #panel-client .claim-btn { flex:none; height:38px; padding:0 22px; border-radius:19px; border:none; background:#1677ff; color:#fff; font-size:13.5px; font-weight:500; cursor:pointer; }
+  #panel-client .claim-btn:hover { background:#3388ff; }
+  #panel-client .claim-btn.disabled, #panel-client .claim-btn.disabled:hover { background:#d3d6dc; color:#fff; cursor:not-allowed; }
+  #panel-client .section { margin:22px 24px 0; }
+  #panel-client .section-head { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+  #panel-client .section-head .line { flex:1; height:1px; background:linear-gradient(to right,transparent,#c7d6f2); }
+  #panel-client .section-head .line.rev { background:linear-gradient(to left,transparent,#c7d6f2); }
+  #panel-client .section-head .title { font-size:15px; font-weight:600; color:#1c3a6b; white-space:nowrap; }
+  #panel-client .progress-card { background:#fff; border:1px solid #eef1f6; border-radius:10px; padding:20px 18px 16px; }
+  #panel-client .tier-info { background:#f5f8ff; border-radius:8px; padding:12px 14px; }
+  #panel-client .tier-info-next { font-size:13px; color:#1677ff; font-weight:600; margin-bottom:10px; }
+  #panel-client .tier-info-row { display:flex; align-items:center; gap:10px; }
+  #panel-client .tier-info-label { flex:none; font-size:12.5px; color:#606266; }
+  #panel-client .tier-info-track { flex:1; height:6px; border-radius:3px; background:#e0e9fb; overflow:hidden; }
+  #panel-client .tier-info-fill { height:100%; background:#1677ff; border-radius:3px; }
+  #panel-client .tier-info-need { flex:none; font-size:12.5px; color:#1677ff; font-weight:500; }
+  #panel-client .rule-table { width:100%; border-collapse:collapse; overflow:hidden; border-radius:8px; }
+  #panel-client .rule-table th { background:#2f6fed; color:#fff; font-size:12.5px; font-weight:500; padding:11px 8px; text-align:center; }
+  #panel-client .rule-table td { font-size:13px; color:#42566b; padding:11px 8px; text-align:center; border-bottom:1px solid #eef1f6; background:#fff; }
+  #panel-client .rule-table tr:nth-child(even) td { background:#f8faff; }
+  #panel-client .rule-table td.pay { color:#1677ff; font-weight:500; }
+  #panel-client .terms-block { margin-top:14px; padding:14px 16px; background:#f7f9fc; border-radius:8px; font-size:12.5px; color:#606266; line-height:1.9; }
+  #panel-client .terms-block p { margin:0; }
+  #panel-client .terms-block .terms-title { font-weight:600; color:#42566b; margin:0 0 2px; }
+  #panel-client .terms-block .terms-title:not(:first-child) { margin-top:10px; }
+  #panel-client .page { padding-bottom:24px; }
+  #panel-client .page.h5 .hero { padding:22px 16px 18px; }
+  #panel-client .page.h5 .hero-title { font-size:17px; }
+  #panel-client .page.h5 .hero-desc, #panel-client .page.h5 .hero-meta { font-size:11.5px; }
+  #panel-client .page.h5 .status-text { padding:12px 16px 2px; font-size:12.5px; }
+  #panel-client .page.h5 .claim-card { margin:12px 16px 0; flex-direction:column; align-items:stretch; gap:10px; padding:14px; }
+  #panel-client .page.h5 .claim-btn { width:100%; }
+  #panel-client .page.h5 .section { margin:18px 16px 0; }
+  #panel-client .page.h5 .section-head .title { font-size:14px; }
+  #panel-client .page.h5 .progress-card { padding:14px 12px 12px; }
+  #panel-client .page.h5 .tier-info-next { font-size:12px; }
+  #panel-client .page.h5 .tier-info-label, #panel-client .page.h5 .tier-info-need { font-size:11.5px; }
+  #panel-client .page.h5 .rule-table th, #panel-client .page.h5 .rule-table td { font-size:11px; padding:8px 4px; }
+  #panel-client .page.h5 .terms-block { font-size:11.5px; padding:12px; }
 </style>
 </head>
 <body>
@@ -39,14 +169,14 @@
       <div class="sub">左侧切换查看后台配置 / 客户端展示</div>
     </div>
     <div class="nav-list">
-      <div class="nav-item active" data-src="活动计算规则_按流水原型.html" onclick="switchView(this)">
+      <div class="nav-item active" data-panel="panel-admin" onclick="switchView(this)">
         <span class="num">1</span>
         <span class="txt">
           <div class="main">活动配置-流水活动</div>
           <div class="sub">新增"按流水"单选项，档位规则配置</div>
         </span>
       </div>
-      <div class="nav-item" data-src="客户端展示_PC与H5对比_按流水原型.html" onclick="switchView(this)">
+      <div class="nav-item" data-panel="panel-client" onclick="switchView(this)">
         <span class="num">2</span>
         <span class="txt">
           <div class="main">客户端展示（PC / H5）</div>
@@ -58,7 +188,390 @@
   </div>
 
   <div class="content">
-    <iframe id="viewFrame" src="活动计算规则_按流水原型.html"></iframe>
+    <div class="panel active" id="panel-admin">
+
+
+<div class="modal">
+  <div class="modal-header">编辑活动（流水排名活动模板） <span class="close">&times;</span></div>
+  <div class="modal-body">
+    <div class="tabs">
+      <span class="active">活动参数设定</span>
+      <span>活动图片设定</span>
+      <span>多语言设置</span>
+    </div>
+
+    <div class="change-banner" id="changeBanner-admin" onclick="toggleChangeBannerAdmin()">
+      <span class="change-banner-arrow" id="changeBannerArrow-admin">▸</span>
+      <span class="change-banner-title">本次改动说明（活动计算规则新增"按流水"模式）</span>
+      <span class="change-banner-sub">— 点击展开查看变更详情</span>
+    </div>
+    <div class="change-banner-panel" id="changeBannerPanel-admin">
+      <ul>
+        <li>「活动计算规则」新增单选项「按流水」，与原有「按排名」二选一；</li>
+        <li>按流水模式不参与排名，仅按会员在统计周期内的有效流水是否达到某"档位"门槛来判断；</li>
+        <li>档位门槛需按从低到高依次递增设置，最多可设置 9 个档位；</li>
+        <li>会员有效流水达到（≥）某档位门槛，即可领取该档位对应"彩金金额"；</li>
+        <li>若流水同时达到多个档位门槛，只发放当前达到的最高档位彩金，不与较低档位累计发放；</li>
+        <li>彩金稽核倍数：规则与"按排名"模式一致。</li>
+      </ul>
+    </div>
+
+    <div class="columns">
+      <div class="col-left">
+        <h3 class="section-title">活动基本配置：</h3>
+
+        <div class="field"><label><span class="req">*</span>活动类型</label><div class="control"><select disabled><option>请选择活动类型，可多选</option></select></div></div>
+        <div class="field"><label><span class="req">*</span>活动名称</label><div class="control inline-row"><input type="text" disabled placeholder="请输入活动名称"><span class="hint">最多输入20个汉字</span></div></div>
+        <div class="field"><label><span class="req">*</span>活动副标题</label><div class="control inline-row"><input type="text" disabled placeholder="请输入活动副标题"><span class="hint">最多输入50个汉字</span></div></div>
+        <div class="field"><label><span class="req">*</span>活动简介文案</label><div class="control inline-row"><input type="text" disabled placeholder="请输入活动简介文案"><span class="hint">最多输入100个汉字</span></div></div>
+        <div class="field"><label><span class="req">*</span>流水统计周期</label><div class="control"><select disabled><option>请选择统计周期</option></select></div></div>
+        <div class="field"><label><span class="req">*</span>活动起止日期</label><div class="control inline-row"><input type="text" disabled placeholder="活动开始日期"><span>~</span><input type="text" disabled placeholder="活动结束日期"><label style="width:auto;white-space:nowrap"><input type="checkbox" disabled> C端用"长期活动"格式显示</label></div></div>
+        <div class="field"><label>活动预热日期</label><div class="control inline-row"><select disabled><option>请选择预热日期</option></select><label style="width:auto;white-space:nowrap"><input type="checkbox" disabled> 预热期置顶</label></div></div>
+        <div class="field"><label>彩金申领日期</label><div class="control"><select disabled><option>请选择奖金申领日期</option></select></div></div>
+        <div class="field"><label><span class="req">*</span>本活动场馆统计范围</label><div class="control inline-row"><select disabled><option>请选择游戏类型</option></select><select disabled><option>请选择游戏场馆，可多选</option></select></div></div>
+        <div class="field"><label><span class="req">*</span>最少基础有效流水</label><div class="control"><input type="number" value="0.00"><div style="font-size:12px;color:#c0c4cc;margin-top:4px">按排名 / 按流水两种模式共用此字段</div></div></div>
+
+        <div class="field">
+          <label><span class="req">*</span>活动计算规则</label>
+          <div class="control">
+            <div class="radio-group" style="margin-bottom:12px">
+              <label><input type="radio" name="calcMode" value="rank" checked onclick="switchMode('rank')">按排名</label>
+              <label><input type="radio" name="calcMode" value="flow" onclick="switchMode('flow')">按流水 <span class="new-tag">NEW</span></label>
+            </div>
+
+            <div class="rule-table-wrap">
+              <div class="rule-table-actions">
+                <button class="icon-btn add" aria-label="新增档位" onclick="addCurrentTier()">+</button>
+                <button class="icon-btn del" aria-label="删除档位（从最后一档开始删除）" onclick="removeLastTier()">🗑</button>
+              </div>
+
+              <table class="rule-table" id="rankTable">
+                <colgroup><col style="width:16%"><col style="width:38%"><col style="width:23%"><col style="width:23%"></colgroup>
+                <thead><tr><th>赛事等级</th><th>排名范围</th><th>彩金金额</th><th>彩金稽核倍数</th></tr></thead>
+                <tbody id="rankBody"></tbody>
+              </table>
+
+              <table class="rule-table" id="flowTable" style="display:none">
+                <colgroup><col style="width:16%"><col style="width:40%"><col style="width:22%"><col style="width:22%"></colgroup>
+                <thead><tr><th>档位名称</th><th>流水门槛</th><th>彩金金额</th><th>彩金稽核倍数</th></tr></thead>
+                <tbody id="flowBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="field"><label><span class="req">*</span>流水排名彩金审核形式</label><div class="control radio-group"><label><input type="radio" name="auditMode" checked disabled>人工审核</label><label><input type="radio" name="auditMode" disabled>自动审核</label></div></div>
+
+        <div class="field">
+          <label><span class="req">*</span>活动规则</label>
+          <div class="control">
+            <div class="editor-toolbar">Sans Serif · Normal · B I U S ...</div>
+            <div class="editor-body">Compose an epic...<br>最多输入2000个汉字</div>
+          </div>
+        </div>
+
+        <div class="field"><label><span class="req">*</span>预算池总额</label><div class="control"><input type="text" disabled value="0.00"></div></div>
+        <div class="field"><label>彩金发放总额</label><div class="control"><input type="text" disabled value="0.00"></div></div>
+      </div>
+
+      <div class="col-right">
+        <h3 class="section-title">消息通知与页面提示：</h3>
+        <div class="field"><label><span class="req">*</span>活动开始消息通知</label><div class="control"><textarea disabled rows="1">#{ActiveName}开启通知</textarea><textarea disabled rows="2" style="margin-top:6px">会员专享！#{ActiveName}火热开启，不拼资历只看实力！指尖交锋定高下，榜单见真章，参与即有机会赢取彩金奖励。</textarea></div></div>
+        <div class="field"><label><span class="req">*</span>彩金领取失败消息通知</label><div class="control"><textarea disabled rows="1">#{ActiveName}彩金申领失败通知</textarea><textarea disabled rows="2" style="margin-top:6px">尊敬的#{AccountName}，很抱歉您此处彩金认领失败。赶快联系客服，我们将为您详细解答并协助处理。</textarea></div></div>
+        <div class="field"><label><span class="req">*</span>彩金到账消息通知</label><div class="control"><textarea disabled rows="1">#{ActiveName}彩金到账通知</textarea><textarea disabled rows="2" style="margin-top:6px">亲爱的#{AccountName}，您参与的#{AccountName}彩金已成功到账！后续继续加油，愿您交易顺遂，一路爆单，大赢特赢</textarea></div></div>
+        <div class="field"><label><span class="req">*</span>预算池枯竭页面提示</label><div class="control"><textarea disabled rows="2">很抱歉，排名彩金的奖池已全部领完！如有疑问，可联系客服，我们将竭诚为您解答！</textarea></div></div>
+        <div class="field"><label><span class="req">*</span>成功提交申请页面提示</label><div class="control"><textarea disabled rows="2">恭喜您！申请已成功提交！我们将尽快审核，结果会在第一时间通知你，静候佳音，愿好运常伴！</textarea></div></div>
+        <div class="field"><label><span class="req">*</span>本期流水未达门坎文案</label><div class="control"><textarea disabled rows="2">目前您在#{ActiveName}中的流水为#{EffectiveCapitalFlow}，距离#{LatestLevel}最低名次流水门槛仅差#{CapitalFlowDifference}，进度已非常接近目标。</textarea></div></div>
+        <div class="field"><label><span class="req">*</span>本期流水冠军激励文案</label><div class="control"><textarea disabled rows="3">太给力了！在#{ActiveName}中您凭借#{EffectiveCapitalFlow}流水，暂列榜单冠军，预计斩获彩金#{GiftMoney}。想确保最终夺冠、拿下奖励，还需持续努力喔~</textarea></div></div>
+        <div class="field"><label><span class="req">*</span>本期流水奖项激励文案</label><div class="control"><textarea disabled rows="3">目前您在#{ActiveName}中的流水已达#{EffectiveCapitalFlow}，暂列榜单#{Ranking}，预计可获彩金#{GiftMoney}；距离#{LatestLevel}最低名次流水门槛仅差流水#{CapitalFlowDifference}。</textarea></div></div>
+        <div class="field"><label><span class="req">*</span>彩金申领期外提示文案</label><div class="control"><textarea disabled rows="2">会员您好！新的#{ActiveName} 彩金申领尚未开始，当前阶段重点是要积累更多有效流水哦~</textarea></div></div>
+        <div class="field"><label><span class="req">*</span>前期流水冠军提示文案</label><div class="control"><textarea disabled rows="2">恭喜您在前期赛事中斩获冠军， 成功将#{GiftMoney}彩金收入囊中。</textarea></div></div>
+        <div class="field"><label><span class="req">*</span>前期获奖会员提示文案</label><div class="control"><textarea disabled rows="2">恭喜您在前期赛事中您以#{Ranking}的成绩斩获#{GiftMoney}彩金。</textarea></div></div>
+        <div class="field"><label><span class="req">*</span>前期未发彩金提示文案</label><div class="control"><textarea disabled rows="2">在前期赛事中您的流水为#{EffectiveCapitalFlow}未能达到活动设定的基准流水标准，确实会让人略感遗憾。</textarea></div></div>
+        <div class="field"><label><span class="req">*</span>彩金申领限时提示</label><div class="control"><textarea disabled rows="1">当前活动正在统计中，请于北京时间 00:30 后领取。</textarea></div></div>
+        <div class="field"><label><span class="req">*</span>彩金已提交审核提示</label><div class="control"><textarea disabled rows="1">当前有#{N}笔彩金发放审核中！请耐心等待！</textarea></div></div>
+
+        <h3 class="section-title" style="margin-top:8px">活动参与对象：</h3>
+        <div class="field"><label>接收对象</label><div class="control radio-group"><label><input type="radio" checked disabled>全部会员</label><label><input type="radio" disabled>上级代理</label><label><input type="radio" disabled>自定义会员</label></div></div>
+        <div class="field"><label><span class="req">*</span>上级代理ID</label><div class="control"><textarea disabled rows="3" placeholder="多个账户需用（半角）逗号隔开，最多支持1000"></textarea></div></div>
+        <div class="field"><label><span class="req">*</span>自定义会员</label><div class="control"><select disabled style="margin-bottom:6px"><option>会员ID</option></select><textarea disabled rows="2" placeholder="多个账户需用（半角）逗号隔开，最多支持1000"></textarea></div></div>
+
+        <h3 class="section-title" style="margin-top:8px">其它设置：</h3>
+        <div class="field"><label>活动标签</label><div class="control radio-group"><label><input type="checkbox" disabled>最新</label><label><input type="checkbox" disabled>热门</label><label><input type="checkbox" disabled>VIP</label><label><input type="checkbox" disabled>限时</label><label><input type="checkbox" disabled>推荐</label></div></div>
+        <div class="field"><label>活动状态</label><div class="control radio-group"><label><input type="radio" checked disabled>停用</label><label><input type="radio" disabled>发布</label></div></div>
+        <div class="field"><label>活动排序</label><div class="control"><input type="text" disabled placeholder="请输入排序值"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var rankRows = [
+  ["一等奖","1","1","100.00","8.00"],
+  ["二等奖","2","4","60.00","8.00"],
+  ["三等奖","5","20","30.00","8.00"],
+  ["四等奖","21","50","10.00","8.00"],
+  ["五等奖","51","1000","2.00","8.00"]
+];
+var flowRowsInit = [
+  ["一档","10000","16.00","8.00"],
+  ["二档","26666","26.00","8.00"],
+  ["三档","36666","36.00","8.00"],
+  ["四档","66666","56.00","8.00"],
+  ["五档","166666","188.00","8.00"],
+  ["六档","366666","388.00","8.00"],
+  ["七档","666666","888.00","8.00"],
+  ["八档","1066666","1688.00","8.00"]
+];
+var MAX_TIERS = 9;
+
+function cell(html){ var td=document.createElement('td'); td.innerHTML = html; return td; }
+function numInput(v,w){ return '<input type="number" value="'+v+'" style="width:'+(w||'100%')+'px">'; }
+
+var rankLabels = ["一等奖","二等奖","三等奖","四等奖","五等奖","六等奖","七等奖","八等奖","九等奖"];
+var flowLabels = ["一档","二档","三档","四档","五档","六档","七档","八档","九档"];
+var rankBody = document.getElementById('rankBody');
+function addRankRow(r){
+  var tr = document.createElement('tr');
+  tr.appendChild(cell('<span>'+r[0]+'</span>'));
+  tr.appendChild(cell('<div class="tier-cell">'+numInput(r[1],60)+'<span>~</span>'+numInput(r[2],60)+'</div>'));
+  tr.appendChild(cell(numInput(r[3],90)));
+  tr.appendChild(cell('<div class="tier-cell">'+numInput(r[4],60)+'<span>倍</span></div>'));
+  rankBody.appendChild(tr);
+}
+rankRows.forEach(addRankRow);
+
+var flowBody = document.getElementById('flowBody');
+function flowTierCount(){ return flowBody.children.length; }
+function addFlowRow(r){
+  var tr = document.createElement('tr');
+  tr.appendChild(cell('<span>'+r[0]+'</span>'));
+  tr.appendChild(cell('<div class="tier-cell"><span class="ge-symbol">≥</span>'+numInput(r[1],130)+'<span style="color:#909399;font-size:12px">即发放</span></div>'));
+  tr.appendChild(cell(numInput(r[2],90)));
+  tr.appendChild(cell('<div class="tier-cell">'+numInput(r[3],60)+'<span>倍</span></div>'));
+  flowBody.appendChild(tr);
+}
+flowRowsInit.forEach(addFlowRow);
+
+var currentMode = 'rank';
+
+function addCurrentTier(){
+  if (currentMode === 'flow') {
+    if (flowTierCount() >= MAX_TIERS) { alert('最多支持设置 '+MAX_TIERS+' 个档位'); return; }
+    var idx = flowTierCount();
+    var label = flowLabels[idx] || ('第'+(idx+1)+'档');
+    addFlowRow([label,'0','0.00','8.00']);
+  } else {
+    if (rankBody.children.length >= MAX_TIERS) { alert('最多支持设置 '+MAX_TIERS+' 个等级（九等奖）'); return; }
+    var idx = rankBody.children.length;
+    var label = rankLabels[idx] || ('第'+(idx+1)+'等奖');
+    addRankRow([label,'0','0','0.00','8.00']);
+  }
+}
+
+function removeLastTier(){
+  var body = currentMode === 'flow' ? flowBody : rankBody;
+  if (body.children.length <= 1) { alert('至少保留 1 档'); return; }
+  body.removeChild(body.lastElementChild);
+}
+
+function switchMode(mode){
+  currentMode = mode;
+  var isRank = mode === 'rank';
+  document.getElementById('rankTable').style.display = isRank ? '' : 'none';
+  document.getElementById('flowTable').style.display = isRank ? 'none' : '';
+}
+
+function toggleChangeBannerAdmin(){
+  var banner = document.getElementById('changeBanner-admin');
+  var panel = document.getElementById('changeBannerPanel-admin');
+  var arrow = document.getElementById('changeBannerArrow-admin');
+  var open = panel.style.display === 'block';
+  panel.style.display = open ? 'none' : 'block';
+  banner.classList.toggle('open', !open);
+  arrow.textContent = '▸';
+}
+
+switchMode('rank');
+</script>
+
+
+    </div>
+    <div class="panel" id="panel-client">
+
+
+<div class="mode-caption"><span class="new-tag">NEW</span> 客户端活动展示 · 按流水模式 · PC 与 H5 对比（申领日期未开始，领取按钮置灰）</div>
+
+<div class="change-banner" id="changeBanner-client" onclick="toggleChangeBannerClient()">
+  <span class="change-banner-arrow" id="changeBannerArrow-client">▸</span>
+  <span class="change-banner-title">本次改动说明（客户端新增"按流水"模式展示）</span>
+  <span class="change-banner-sub">— 点击展开查看变更详情</span>
+</div>
+<div class="change-banner-panel" id="changeBannerPanel-client">
+  <ul>
+    <li>客户端新增"按流水"模式的完整展示，对应后台「活动计算规则」新增的"按流水"单选项；</li>
+    <li>原按排名模式的"今日/昨日赛事榜单"排行榜模块，流水模式下没有排名概念，替换为"我的档位进度"模块（单条进度条 + 距离下一档提示，突出还差多少流水即可解锁下一档，用于激励继续投注），PC 与 H5 两端保持一致展示；</li>
+    <li>底部"活动规则"表格字段从 赛事等级 / 彩金金额 / 提现要求，调整为 档位名称 / 流水门槛 / 彩金金额 / 提现要求，并补充"仅按最高达标档位发放，不与较低档位累计"的说明；</li>
+    <li>"立即领取"按钮新增置灰态：彩金申领日期尚未开始时按钮不可点击，文案同步提示"请留意开放时间"。</li>
+  </ul>
+</div>
+
+<div class="compare-wrap">
+
+  <div class="device-col">
+    <div class="device-label">PC 端</div>
+    <div class="browser-frame">
+      <div class="browser-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="addr"></div></div>
+
+      <div class="page">
+        <div class="nav-bar pc">
+          <span class="nav-title">每周流水冲刺活动</span>
+        </div>
+        <div class="hero">
+          <div class="hero-badge"></div>
+          <div class="hero-title">每日流水冲刺赛，达标即有彩金。<br>流水说了算，参与就赢彩金</div>
+          <div class="hero-desc">每日流水冲刺赛，不拼排名只看流水！档位说话，冲得越多，彩金越高，参与即有机会赢取彩金奖励。</div>
+          <div class="hero-meta">活动场馆：香港六合彩、加拿大牛牛、加拿大4.2-4.6、加拿大网盘、加拿大网盘996、加拿大百家乐<br>活动统计时间：<b>2026/07/23 ~ 2026/07/23</b></div>
+        </div>
+
+        <div class="status-text">目前您在<b>每周流水冲刺活动</b>中的流水已达 <b>45,000.00</b>，预计可获彩金 <b>36.00</b>；距离「四档」最低流水门槛仅差流水 <b>21,666.00</b>。</div>
+
+        <div class="claim-card">
+          <div class="claim-card-text">您已达成「三档」标准，预计可获得彩金 <b style="color:#1677ff">36.00</b>，彩金申领日期尚未开始，请留意开放时间后再来领取哦～</div>
+          <button class="claim-btn disabled" disabled>立即领取</button>
+        </div>
+
+        <div class="section">
+          <div class="section-head"><span class="line"></span><span class="title">我的档位进度</span><span class="line rev"></span></div>
+          <div class="progress-card">
+            <div class="tier-info">
+              <div class="tier-info-next">距离下一档位：四档（还差流水 21,666.00 即可解锁彩金 56.00）</div>
+              <div class="tier-info-row">
+                <span class="tier-info-label">本档再投注</span>
+                <div class="tier-info-track"><div class="tier-info-fill" style="width:27.8%"></div></div>
+                <span class="tier-info-need">还需流水 21,666.00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-head"><span class="line"></span><span class="title">活动规则</span><span class="line rev"></span></div>
+          <table class="rule-table">
+            <thead><tr><th>档位名称</th><th>流水门槛</th><th>彩金金额</th><th>提现要求</th></tr></thead>
+            <tbody>
+              <tr><td>一档</td><td>≥ 10,000.00</td><td>16.00</td><td class="pay">8 倍流水可提现</td></tr>
+              <tr><td>二档</td><td>≥ 26,666.00</td><td>26.00</td><td class="pay">8 倍流水可提现</td></tr>
+              <tr><td>三档</td><td>≥ 36,666.00</td><td>36.00</td><td class="pay">8 倍流水可提现</td></tr>
+              <tr><td>四档</td><td>≥ 66,666.00</td><td>56.00</td><td class="pay">8 倍流水可提现</td></tr>
+              <tr><td>五档</td><td>≥ 166,666.00</td><td>188.00</td><td class="pay">8 倍流水可提现</td></tr>
+              <tr><td>六档</td><td>≥ 366,666.00</td><td>388.00</td><td class="pay">8 倍流水可提现</td></tr>
+              <tr><td>七档</td><td>≥ 666,666.00</td><td>888.00</td><td class="pay">8 倍流水可提现</td></tr>
+              <tr><td>八档</td><td>≥ 1,066,666.00</td><td>1688.00</td><td class="pay">8 倍流水可提现</td></tr>
+            </tbody>
+          </table>
+          <div style="font-size:11.5px;color:#c0c4cc;margin-top:8px">说明：流水同时达到多个档位时，仅按最高达标档位发放彩金，不与较低档位累计。</div>
+
+          <div class="terms-block">
+            <p class="terms-title">活动要求：</p>
+            <p>1. 同IP多账号禁止参与活动。</p>
+            <p>2. 香港六合彩、加拿大满赔贵宾厅、加拿大网盘996的流水、体育游戏不计算在内。</p>
+            <p class="terms-title">结算与注意事项：</p>
+            <p>1. 每周一为新的一周，未达标流水无效；</p>
+            <p>2. 北京时间每周一联系客服彩金@u8kefu88，逾期视为放弃活动；</p>
+            <p>3. 所有解释权归U8所有；</p>
+            <p>4. 希望大家积极参与，祝大家好运！</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="device-col">
+    <div class="device-label">H5（手机端）</div>
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+
+      <div class="page h5">
+        <div class="nav-bar">
+          <span class="nav-back">‹</span>
+          <span class="nav-title">每周流水冲刺活动</span>
+          <span class="nav-icons"><span class="nav-icon-dot"></span><span class="nav-icon-dot"></span></span>
+        </div>
+        <div class="hero">
+          <div class="hero-badge"></div>
+          <div class="hero-title">每日流水冲刺赛，达标即有彩金。<br>流水说了算，参与就赢彩金</div>
+          <div class="hero-desc">每日流水冲刺赛，不拼排名只看流水！档位说话，冲得越多，彩金越高，参与即有机会赢取彩金奖励。</div>
+          <div class="hero-meta">活动场馆：香港六合彩、加拿大牛牛、加拿大4.2-4.6、加拿大网盘、加拿大网盘996、加拿大百家乐<br>活动统计时间：<b>2026/07/23 ~ 2026/07/23</b></div>
+        </div>
+
+        <div class="status-text">目前您在<b>每周流水冲刺活动</b>中的流水已达 <b>45,000.00</b>，预计可获彩金 <b>36.00</b>；距离「四档」最低流水门槛仅差流水 <b>21,666.00</b>。</div>
+
+        <div class="claim-card">
+          <div class="claim-card-text">您已达成「三档」标准，预计可获得彩金 <b style="color:#1677ff">36.00</b>，彩金申领日期尚未开始，请留意开放时间后再来领取哦～</div>
+          <button class="claim-btn disabled" disabled>立即领取</button>
+        </div>
+
+        <div class="section">
+          <div class="section-head"><span class="line"></span><span class="title">我的档位进度</span><span class="line rev"></span></div>
+          <div class="progress-card">
+            <div class="tier-info">
+              <div class="tier-info-next">距离下一档位：四档（还差流水 21,666.00 即可解锁彩金 56.00）</div>
+              <div class="tier-info-row">
+                <span class="tier-info-label">本档再投注</span>
+                <div class="tier-info-track"><div class="tier-info-fill" style="width:27.8%"></div></div>
+                <span class="tier-info-need">还需流水 21,666.00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-head"><span class="line"></span><span class="title">活动规则</span><span class="line rev"></span></div>
+          <table class="rule-table">
+            <thead><tr><th>档位名称</th><th>流水门槛</th><th>彩金金额</th><th>提现要求</th></tr></thead>
+            <tbody>
+              <tr><td>一档</td><td>≥ 10,000.00</td><td>16.00</td><td class="pay">8倍</td></tr>
+              <tr><td>二档</td><td>≥ 26,666.00</td><td>26.00</td><td class="pay">8倍</td></tr>
+              <tr><td>三档</td><td>≥ 36,666.00</td><td>36.00</td><td class="pay">8倍</td></tr>
+              <tr><td>四档</td><td>≥ 66,666.00</td><td>56.00</td><td class="pay">8倍</td></tr>
+              <tr><td>五档</td><td>≥ 166,666.00</td><td>188.00</td><td class="pay">8倍</td></tr>
+              <tr><td>六档</td><td>≥ 366,666.00</td><td>388.00</td><td class="pay">8倍</td></tr>
+              <tr><td>七档</td><td>≥ 666,666.00</td><td>888.00</td><td class="pay">8倍</td></tr>
+              <tr><td>八档</td><td>≥ 1,066,666.00</td><td>1688.00</td><td class="pay">8倍</td></tr>
+            </tbody>
+          </table>
+          <div style="font-size:11px;color:#c0c4cc;margin-top:8px">说明：流水同时达到多个档位时，仅按最高达标档位发放彩金，不与较低档位累计。</div>
+
+          <div class="terms-block">
+            <p class="terms-title">活动要求：</p>
+            <p>1. 同IP多账号禁止参与活动。</p>
+            <p>2. 香港六合彩、加拿大满赔贵宾厅、加拿大网盘996的流水、体育游戏不计算在内。</p>
+            <p class="terms-title">结算与注意事项：</p>
+            <p>1. 每周一为新的一周，未达标流水无效；</p>
+            <p>2. 北京时间每周一联系客服彩金@u8kefu88，逾期视为放弃活动；</p>
+            <p>3. 所有解释权归U8所有；</p>
+            <p>4. 希望大家积极参与，祝大家好运！</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggleChangeBannerClient(){
+  var panel = document.getElementById('changeBannerPanel-client');
+  var arrow = document.getElementById('changeBannerArrow-client');
+  var open = panel.style.display === 'block';
+  panel.style.display = open ? 'none' : 'block';
+  arrow.style.transform = open ? 'rotate(0deg)' : 'rotate(90deg)';
+}
+</script>
+
+
+    </div>
   </div>
 </div>
 
@@ -66,7 +579,9 @@
 function switchView(el){
   document.querySelectorAll('.nav-item').forEach(function(item){ item.classList.remove('active'); });
   el.classList.add('active');
-  document.getElementById('viewFrame').src = el.getAttribute('data-src');
+  var target = el.getAttribute('data-panel');
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById(target).classList.add('active');
 }
 </script>
 
