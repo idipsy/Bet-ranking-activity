@@ -2,268 +2,72 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>编辑活动（流水排名活动模板）- 原型</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>按流水模式 · 综合原型（后台 + 客户端）</title>
 <style>
-  * { box-sizing: border-box; }
-  body { margin:0; padding:24px; background:#f0f2f5; font-family:"PingFang SC","Microsoft YaHei",Arial,sans-serif; color:#303133; font-size:14px; }
-  .modal { max-width:1560px; margin:0 auto; background:#fff; border:1px solid #e4e7ed; border-radius:4px; }
-  .modal-header { display:flex; justify-content:space-between; align-items:center; padding:16px 24px; border-bottom:1px solid #ebeef5; font-size:16px; font-weight:600; }
-  .modal-header .close { cursor:pointer; color:#909399; font-size:18px; }
-  .modal-body { padding:20px 24px 32px; }
-  .tabs { display:flex; gap:32px; border-bottom:1px solid #ebeef5; margin-bottom:20px; }
-  .tabs span { padding:10px 2px; cursor:pointer; color:#606266; }
-  .tabs span.active { color:#1677ff; border-bottom:2px solid #1677ff; font-weight:500; }
-  .columns { display:flex; gap:40px; align-items:flex-start; }
-  .col-left { flex:1.35; min-width:0; }
-  .col-right { flex:1; min-width:0; border-left:1px dashed #e4e7ed; padding-left:40px; }
-  h3.section-title { font-size:14px; font-weight:600; margin:0 0 16px; }
-  .field { display:flex; align-items:flex-start; margin-bottom:16px; gap:12px; }
-  .field > label { width:150px; flex:none; text-align:right; color:#606266; padding-top:7px; font-size:13px; }
-  .field > label .req { color:#f56c6c; margin-right:2px; }
-  .field .control { flex:1; min-width:0; }
-  input[type=text], input[type=number], select, textarea {
-    height:32px; border:1px solid #dcdfe6; border-radius:4px; padding:0 10px; font-size:13px; color:#303133; width:100%; background:#fff;
-  }
-  input:disabled, select:disabled { background:#f5f7fa; color:#c0c4cc; }
-  textarea { height:auto; padding:8px 10px; line-height:1.5; resize:vertical; }
-  .hint { color:#c0c4cc; font-size:12px; margin-left:8px; white-space:nowrap; }
-  .inline-row { display:flex; align-items:center; gap:8px; }
-  .radio-group label { margin-right:24px; color:#303133; cursor:pointer; }
-  .radio-group input { margin-right:6px; vertical-align:-2px; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; padding:0; height:100%; font-family:"PingFang SC","Microsoft YaHei",Arial,sans-serif; }
+  .app-shell { display:flex; height:100vh; overflow:hidden; }
 
-  .change-banner { display:flex; align-items:center; gap:8px; border:1px solid #d9a765; background:#fdf8ef; color:#8a5a2b; padding:10px 14px; border-radius:4px; cursor:pointer; font-size:13px; margin-bottom:20px; user-select:none; }
-  .change-banner:hover { background:#fbf1de; }
-  .change-banner-arrow { display:inline-block; font-size:11px; transition:transform .15s ease; transform:rotate(0deg); }
-  .change-banner.open .change-banner-arrow { transform:rotate(90deg); }
-  .change-banner-title { font-weight:600; }
-  .change-banner-sub { color:#b08a55; }
-  .change-banner-panel { display:none; margin:-8px 0 20px; padding:12px 16px; background:#fdf8ef; border:1px solid #d9a765; border-top:none; border-radius:0 0 4px 4px; font-size:12.5px; color:#7a5a34; line-height:1.9; }
-  .change-banner-panel ul { margin:0; padding-left:18px; }
+  .sidebar { width:250px; flex:none; background:#1c2b45; color:#fff; display:flex; flex-direction:column; }
+  .sidebar-header { padding:20px 20px 16px; border-bottom:1px solid rgba(255,255,255,.1); }
+  .sidebar-header .title { font-size:14px; font-weight:600; }
+  .sidebar-header .sub { font-size:11.5px; color:rgba(255,255,255,.55); margin-top:4px; }
 
-  .new-tag { display:inline-block; background:#1677ff; color:#fff; font-size:10px; font-weight:600; padding:1px 6px; border-radius:3px; vertical-align:2px; letter-spacing:.3px; }
+  .nav-list { flex:1; padding:12px 0; overflow-y:auto; }
+  .nav-item { display:flex; align-items:flex-start; gap:10px; padding:12px 20px; cursor:pointer; border-left:3px solid transparent; color:rgba(255,255,255,.72); }
+  .nav-item:hover { background:rgba(255,255,255,.05); color:#fff; }
+  .nav-item.active { background:rgba(255,255,255,.08); color:#fff; border-left-color:#1677ff; }
+  .nav-item .num { flex:none; width:20px; height:20px; border-radius:50%; background:rgba(255,255,255,.14); display:flex; align-items:center; justify-content:center; font-size:11px; margin-top:1px; }
+  .nav-item.active .num { background:#1677ff; }
+  .nav-item .txt .main { font-size:13.5px; font-weight:500; line-height:1.5; }
+  .nav-item .txt .sub { font-size:11.5px; color:rgba(255,255,255,.5); margin-top:2px; line-height:1.5; }
+  .nav-item.active .txt .sub { color:rgba(255,255,255,.65); }
 
-  .rule-table-wrap { border:1px solid #dcdfe6; border-radius:6px; padding:14px; }
-  .rule-table-actions { display:flex; justify-content:flex-end; gap:8px; margin-bottom:10px; }
-  .icon-btn { width:26px; height:26px; border-radius:50%; border:none; color:#fff; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
-  .icon-btn.add { background:#1677ff; }
-  .icon-btn.del { background:#f56c6c; }
-  table.rule-table { width:100%; border-collapse:collapse; table-layout:fixed; }
-  table.rule-table th { background:#fafafa; border:1px solid #ebeef5; padding:8px; font-weight:500; color:#606266; font-size:12.5px; text-align:left; }
-  table.rule-table td { border:1px solid #ebeef5; padding:6px 8px; }
-  table.rule-table input[type=number] { width:100%; }
-  .tier-cell { display:flex; align-items:center; gap:6px; }
-  .ge-symbol { color:#909399; font-size:13px; }
+  .sidebar-footer { padding:14px 20px; border-top:1px solid rgba(255,255,255,.1); font-size:11px; color:rgba(255,255,255,.4); line-height:1.7; }
 
-  .editor-toolbar { border:1px solid #dcdfe6; border-bottom:none; padding:6px 8px; color:#909399; font-size:12px; border-radius:4px 4px 0 0; }
-  .editor-body { border:1px solid #dcdfe6; border-top:none; border-radius:0 0 4px 4px; min-height:110px; padding:10px; color:#c0c4cc; font-size:13px; }
-
-  .divider { border:none; border-top:1px dashed #e4e7ed; margin:20px 0; }
+  .content { flex:1; min-width:0; height:100%; background:#eef1f6; }
+  .content iframe { width:100%; height:100%; border:none; display:block; }
 </style>
 </head>
 <body>
 
-<div class="modal">
-  <div class="modal-header">编辑活动（流水排名活动模板） <span class="close">&times;</span></div>
-  <div class="modal-body">
-    <div class="tabs">
-      <span class="active">活动参数设定</span>
-      <span>活动图片设定</span>
-      <span>多语言设置</span>
+<div class="app-shell">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="title">流水活动 · 按流水模式</div>
+      <div class="sub">左侧切换查看后台配置 / 客户端展示</div>
     </div>
-
-    <div class="change-banner" id="changeBanner" onclick="toggleChangeBanner()">
-      <span class="change-banner-arrow" id="changeBannerArrow">▸</span>
-      <span class="change-banner-title">本次改动说明（活动计算规则新增"按流水"模式）</span>
-      <span class="change-banner-sub">— 点击展开查看变更详情</span>
-    </div>
-    <div class="change-banner-panel" id="changeBannerPanel">
-      <ul>
-        <li>「活动计算规则」新增单选项「按流水」，与原有「按排名」二选一；</li>
-        <li>按流水模式不参与排名，仅按会员在统计周期内的有效流水是否达到某"档位"门槛来判断；</li>
-        <li>档位门槛需按从低到高依次递增设置，最多可设置 9 个档位；</li>
-        <li>会员有效流水达到（≥）某档位门槛，即可领取该档位对应"彩金金额"；</li>
-        <li>若流水同时达到多个档位门槛，只发放当前达到的最高档位彩金，不与较低档位累计发放；</li>
-        <li>彩金稽核倍数：规则与"按排名"模式一致。</li>
-      </ul>
-    </div>
-
-    <div class="columns">
-      <div class="col-left">
-        <h3 class="section-title">活动基本配置：</h3>
-
-        <div class="field"><label><span class="req">*</span>活动类型</label><div class="control"><select disabled><option>请选择活动类型，可多选</option></select></div></div>
-        <div class="field"><label><span class="req">*</span>活动名称</label><div class="control inline-row"><input type="text" disabled placeholder="请输入活动名称"><span class="hint">最多输入20个汉字</span></div></div>
-        <div class="field"><label><span class="req">*</span>活动副标题</label><div class="control inline-row"><input type="text" disabled placeholder="请输入活动副标题"><span class="hint">最多输入50个汉字</span></div></div>
-        <div class="field"><label><span class="req">*</span>活动简介文案</label><div class="control inline-row"><input type="text" disabled placeholder="请输入活动简介文案"><span class="hint">最多输入100个汉字</span></div></div>
-        <div class="field"><label><span class="req">*</span>流水统计周期</label><div class="control"><select disabled><option>请选择统计周期</option></select></div></div>
-        <div class="field"><label><span class="req">*</span>活动起止日期</label><div class="control inline-row"><input type="text" disabled placeholder="活动开始日期"><span>~</span><input type="text" disabled placeholder="活动结束日期"><label style="width:auto;white-space:nowrap"><input type="checkbox" disabled> C端用"长期活动"格式显示</label></div></div>
-        <div class="field"><label>活动预热日期</label><div class="control inline-row"><select disabled><option>请选择预热日期</option></select><label style="width:auto;white-space:nowrap"><input type="checkbox" disabled> 预热期置顶</label></div></div>
-        <div class="field"><label>彩金申领日期</label><div class="control"><select disabled><option>请选择奖金申领日期</option></select></div></div>
-        <div class="field"><label><span class="req">*</span>本活动场馆统计范围</label><div class="control inline-row"><select disabled><option>请选择游戏类型</option></select><select disabled><option>请选择游戏场馆，可多选</option></select></div></div>
-        <div class="field"><label><span class="req">*</span>最少基础有效流水</label><div class="control"><input type="number" value="0.00"><div style="font-size:12px;color:#c0c4cc;margin-top:4px">按排名 / 按流水两种模式共用此字段</div></div></div>
-
-        <div class="field">
-          <label><span class="req">*</span>活动计算规则</label>
-          <div class="control">
-            <div class="radio-group" style="margin-bottom:12px">
-              <label><input type="radio" name="calcMode" value="rank" checked onclick="switchMode('rank')">按排名</label>
-              <label><input type="radio" name="calcMode" value="flow" onclick="switchMode('flow')">按流水 <span class="new-tag">NEW</span></label>
-            </div>
-
-            <div class="rule-table-wrap">
-              <div class="rule-table-actions">
-                <button class="icon-btn add" aria-label="新增档位" onclick="addCurrentTier()">+</button>
-                <button class="icon-btn del" aria-label="删除档位（从最后一档开始删除）" onclick="removeLastTier()">🗑</button>
-              </div>
-
-              <table class="rule-table" id="rankTable">
-                <colgroup><col style="width:16%"><col style="width:38%"><col style="width:23%"><col style="width:23%"></colgroup>
-                <thead><tr><th>赛事等级</th><th>排名范围</th><th>彩金金额</th><th>彩金稽核倍数</th></tr></thead>
-                <tbody id="rankBody"></tbody>
-              </table>
-
-              <table class="rule-table" id="flowTable" style="display:none">
-                <colgroup><col style="width:16%"><col style="width:40%"><col style="width:22%"><col style="width:22%"></colgroup>
-                <thead><tr><th>档位名称</th><th>流水门槛</th><th>彩金金额</th><th>彩金稽核倍数</th></tr></thead>
-                <tbody id="flowBody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <div class="field"><label><span class="req">*</span>流水排名彩金审核形式</label><div class="control radio-group"><label><input type="radio" name="auditMode" checked disabled>人工审核</label><label><input type="radio" name="auditMode" disabled>自动审核</label></div></div>
-
-        <div class="field">
-          <label><span class="req">*</span>活动规则</label>
-          <div class="control">
-            <div class="editor-toolbar">Sans Serif · Normal · B I U S ...</div>
-            <div class="editor-body">Compose an epic...<br>最多输入2000个汉字</div>
-          </div>
-        </div>
-
-        <div class="field"><label><span class="req">*</span>预算池总额</label><div class="control"><input type="text" disabled value="0.00"></div></div>
-        <div class="field"><label>彩金发放总额</label><div class="control"><input type="text" disabled value="0.00"></div></div>
+    <div class="nav-list">
+      <div class="nav-item active" data-src="活动计算规则_按流水原型.html" onclick="switchView(this)">
+        <span class="num">1</span>
+        <span class="txt">
+          <div class="main">活动配置-流水活动</div>
+          <div class="sub">新增"按流水"单选项，档位规则配置</div>
+        </span>
       </div>
-
-      <div class="col-right">
-        <h3 class="section-title">消息通知与页面提示：</h3>
-        <div class="field"><label><span class="req">*</span>活动开始消息通知</label><div class="control"><textarea disabled rows="1">#{ActiveName}开启通知</textarea><textarea disabled rows="2" style="margin-top:6px">会员专享！#{ActiveName}火热开启，不拼资历只看实力！指尖交锋定高下，榜单见真章，参与即有机会赢取彩金奖励。</textarea></div></div>
-        <div class="field"><label><span class="req">*</span>彩金领取失败消息通知</label><div class="control"><textarea disabled rows="1">#{ActiveName}彩金申领失败通知</textarea><textarea disabled rows="2" style="margin-top:6px">尊敬的#{AccountName}，很抱歉您此处彩金认领失败。赶快联系客服，我们将为您详细解答并协助处理。</textarea></div></div>
-        <div class="field"><label><span class="req">*</span>彩金到账消息通知</label><div class="control"><textarea disabled rows="1">#{ActiveName}彩金到账通知</textarea><textarea disabled rows="2" style="margin-top:6px">亲爱的#{AccountName}，您参与的#{AccountName}彩金已成功到账！后续继续加油，愿您交易顺遂，一路爆单，大赢特赢</textarea></div></div>
-        <div class="field"><label><span class="req">*</span>预算池枯竭页面提示</label><div class="control"><textarea disabled rows="2">很抱歉，排名彩金的奖池已全部领完！如有疑问，可联系客服，我们将竭诚为您解答！</textarea></div></div>
-        <div class="field"><label><span class="req">*</span>成功提交申请页面提示</label><div class="control"><textarea disabled rows="2">恭喜您！申请已成功提交！我们将尽快审核，结果会在第一时间通知你，静候佳音，愿好运常伴！</textarea></div></div>
-        <div class="field"><label><span class="req">*</span>本期流水未达门坎文案</label><div class="control"><textarea disabled rows="2">目前您在#{ActiveName}中的流水为#{EffectiveCapitalFlow}，距离#{LatestLevel}最低名次流水门槛仅差#{CapitalFlowDifference}，进度已非常接近目标。</textarea></div></div>
-        <div class="field"><label><span class="req">*</span>本期流水冠军激励文案</label><div class="control"><textarea disabled rows="3">太给力了！在#{ActiveName}中您凭借#{EffectiveCapitalFlow}流水，暂列榜单冠军，预计斩获彩金#{GiftMoney}。想确保最终夺冠、拿下奖励，还需持续努力喔~</textarea></div></div>
-        <div class="field"><label><span class="req">*</span>本期流水奖项激励文案</label><div class="control"><textarea disabled rows="3">目前您在#{ActiveName}中的流水已达#{EffectiveCapitalFlow}，暂列榜单#{Ranking}，预计可获彩金#{GiftMoney}；距离#{LatestLevel}最低名次流水门槛仅差流水#{CapitalFlowDifference}。</textarea></div></div>
-        <div class="field"><label><span class="req">*</span>彩金申领期外提示文案</label><div class="control"><textarea disabled rows="2">会员您好！新的#{ActiveName} 彩金申领尚未开始，当前阶段重点是要积累更多有效流水哦~</textarea></div></div>
-        <div class="field"><label><span class="req">*</span>前期流水冠军提示文案</label><div class="control"><textarea disabled rows="2">恭喜您在前期赛事中斩获冠军， 成功将#{GiftMoney}彩金收入囊中。</textarea></div></div>
-        <div class="field"><label><span class="req">*</span>前期获奖会员提示文案</label><div class="control"><textarea disabled rows="2">恭喜您在前期赛事中您以#{Ranking}的成绩斩获#{GiftMoney}彩金。</textarea></div></div>
-        <div class="field"><label><span class="req">*</span>前期未发彩金提示文案</label><div class="control"><textarea disabled rows="2">在前期赛事中您的流水为#{EffectiveCapitalFlow}未能达到活动设定的基准流水标准，确实会让人略感遗憾。</textarea></div></div>
-        <div class="field"><label><span class="req">*</span>彩金申领限时提示</label><div class="control"><textarea disabled rows="1">当前活动正在统计中，请于北京时间 00:30 后领取。</textarea></div></div>
-        <div class="field"><label><span class="req">*</span>彩金已提交审核提示</label><div class="control"><textarea disabled rows="1">当前有#{N}笔彩金发放审核中！请耐心等待！</textarea></div></div>
-
-        <h3 class="section-title" style="margin-top:8px">活动参与对象：</h3>
-        <div class="field"><label>接收对象</label><div class="control radio-group"><label><input type="radio" checked disabled>全部会员</label><label><input type="radio" disabled>上级代理</label><label><input type="radio" disabled>自定义会员</label></div></div>
-        <div class="field"><label><span class="req">*</span>上级代理ID</label><div class="control"><textarea disabled rows="3" placeholder="多个账户需用（半角）逗号隔开，最多支持1000"></textarea></div></div>
-        <div class="field"><label><span class="req">*</span>自定义会员</label><div class="control"><select disabled style="margin-bottom:6px"><option>会员ID</option></select><textarea disabled rows="2" placeholder="多个账户需用（半角）逗号隔开，最多支持1000"></textarea></div></div>
-
-        <h3 class="section-title" style="margin-top:8px">其它设置：</h3>
-        <div class="field"><label>活动标签</label><div class="control radio-group"><label><input type="checkbox" disabled>最新</label><label><input type="checkbox" disabled>热门</label><label><input type="checkbox" disabled>VIP</label><label><input type="checkbox" disabled>限时</label><label><input type="checkbox" disabled>推荐</label></div></div>
-        <div class="field"><label>活动状态</label><div class="control radio-group"><label><input type="radio" checked disabled>停用</label><label><input type="radio" disabled>发布</label></div></div>
-        <div class="field"><label>活动排序</label><div class="control"><input type="text" disabled placeholder="请输入排序值"></div></div>
+      <div class="nav-item" data-src="客户端展示_PC与H5对比_按流水原型.html" onclick="switchView(this)">
+        <span class="num">2</span>
+        <span class="txt">
+          <div class="main">客户端展示（PC / H5）</div>
+          <div class="sub">按流水模式的用户端页面，双端对比</div>
+        </span>
       </div>
     </div>
+    <div class="sidebar-footer">供开发查阅使用<br>点击左侧菜单切换视图</div>
+  </div>
+
+  <div class="content">
+    <iframe id="viewFrame" src="活动计算规则_按流水原型.html"></iframe>
   </div>
 </div>
 
 <script>
-var rankRows = [
-  ["一等奖","1","1","100.00","8.00"],
-  ["二等奖","2","4","60.00","8.00"],
-  ["三等奖","5","20","30.00","8.00"],
-  ["四等奖","21","50","10.00","8.00"],
-  ["五等奖","51","1000","2.00","8.00"]
-];
-var flowRowsInit = [
-  ["一档","10000","16.00","8.00"],
-  ["二档","26666","26.00","8.00"],
-  ["三档","36666","36.00","8.00"],
-  ["四档","66666","56.00","8.00"],
-  ["五档","166666","188.00","8.00"],
-  ["六档","366666","388.00","8.00"],
-  ["七档","666666","888.00","8.00"],
-  ["八档","1066666","1688.00","8.00"]
-];
-var MAX_TIERS = 9;
-
-function cell(html){ var td=document.createElement('td'); td.innerHTML = html; return td; }
-function numInput(v,w){ return '<input type="number" value="'+v+'" style="width:'+(w||'100%')+'px">'; }
-
-var rankLabels = ["一等奖","二等奖","三等奖","四等奖","五等奖","六等奖","七等奖","八等奖","九等奖"];
-var flowLabels = ["一档","二档","三档","四档","五档","六档","七档","八档","九档"];
-var rankBody = document.getElementById('rankBody');
-function addRankRow(r){
-  var tr = document.createElement('tr');
-  tr.appendChild(cell('<span>'+r[0]+'</span>'));
-  tr.appendChild(cell('<div class="tier-cell">'+numInput(r[1],60)+'<span>~</span>'+numInput(r[2],60)+'</div>'));
-  tr.appendChild(cell(numInput(r[3],90)));
-  tr.appendChild(cell('<div class="tier-cell">'+numInput(r[4],60)+'<span>倍</span></div>'));
-  rankBody.appendChild(tr);
+function switchView(el){
+  document.querySelectorAll('.nav-item').forEach(function(item){ item.classList.remove('active'); });
+  el.classList.add('active');
+  document.getElementById('viewFrame').src = el.getAttribute('data-src');
 }
-rankRows.forEach(addRankRow);
-
-var flowBody = document.getElementById('flowBody');
-function flowTierCount(){ return flowBody.children.length; }
-function addFlowRow(r){
-  var tr = document.createElement('tr');
-  tr.appendChild(cell('<span>'+r[0]+'</span>'));
-  tr.appendChild(cell('<div class="tier-cell"><span class="ge-symbol">≥</span>'+numInput(r[1],130)+'<span style="color:#909399;font-size:12px">即发放</span></div>'));
-  tr.appendChild(cell(numInput(r[2],90)));
-  tr.appendChild(cell('<div class="tier-cell">'+numInput(r[3],60)+'<span>倍</span></div>'));
-  flowBody.appendChild(tr);
-}
-flowRowsInit.forEach(addFlowRow);
-
-var currentMode = 'rank';
-
-function addCurrentTier(){
-  if (currentMode === 'flow') {
-    if (flowTierCount() >= MAX_TIERS) { alert('最多支持设置 '+MAX_TIERS+' 个档位'); return; }
-    var idx = flowTierCount();
-    var label = flowLabels[idx] || ('第'+(idx+1)+'档');
-    addFlowRow([label,'0','0.00','8.00']);
-  } else {
-    if (rankBody.children.length >= MAX_TIERS) { alert('最多支持设置 '+MAX_TIERS+' 个等级（九等奖）'); return; }
-    var idx = rankBody.children.length;
-    var label = rankLabels[idx] || ('第'+(idx+1)+'等奖');
-    addRankRow([label,'0','0','0.00','8.00']);
-  }
-}
-
-function removeLastTier(){
-  var body = currentMode === 'flow' ? flowBody : rankBody;
-  if (body.children.length <= 1) { alert('至少保留 1 档'); return; }
-  body.removeChild(body.lastElementChild);
-}
-
-function switchMode(mode){
-  currentMode = mode;
-  var isRank = mode === 'rank';
-  document.getElementById('rankTable').style.display = isRank ? '' : 'none';
-  document.getElementById('flowTable').style.display = isRank ? 'none' : '';
-}
-
-function toggleChangeBanner(){
-  var banner = document.getElementById('changeBanner');
-  var panel = document.getElementById('changeBannerPanel');
-  var arrow = document.getElementById('changeBannerArrow');
-  var open = panel.style.display === 'block';
-  panel.style.display = open ? 'none' : 'block';
-  banner.classList.toggle('open', !open);
-  arrow.textContent = '▸';
-}
-
-switchMode('rank');
 </script>
 
 </body>
