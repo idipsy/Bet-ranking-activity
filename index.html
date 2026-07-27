@@ -3,190 +3,179 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>按流水模式 · 综合原型（后台 + 客户端）</title>
+<title>流水活动原型合集</title>
 <style>
-  html, body { margin:0; padding:0; height:100%; font-family:"PingFang SC","Microsoft YaHei",Arial,sans-serif; }
-  .app-shell { display:flex; height:100vh; overflow:hidden; }
-
-  .sidebar { width:250px; flex:none; background:#1c2b45; color:#fff; display:flex; flex-direction:column; }
-  .sidebar-header { padding:20px 20px 16px; border-bottom:1px solid rgba(255,255,255,.1); }
-  .sidebar-header .title { font-size:14px; font-weight:600; }
-  .sidebar-header .sub { font-size:11.5px; color:rgba(255,255,255,.55); margin-top:4px; }
-
-  .nav-list { flex:1; padding:12px 0; overflow-y:auto; }
-  .nav-item { display:flex; align-items:flex-start; gap:10px; padding:12px 20px; cursor:pointer; border-left:3px solid transparent; color:rgba(255,255,255,.72); }
-  .nav-item:hover { background:rgba(255,255,255,.05); color:#fff; }
-  .nav-item.active { background:rgba(255,255,255,.08); color:#fff; border-left-color:#1677ff; }
-  .nav-item .num { flex:none; width:20px; height:20px; border-radius:50%; background:rgba(255,255,255,.14); display:flex; align-items:center; justify-content:center; font-size:11px; margin-top:1px; }
-  .nav-item.active .num { background:#1677ff; }
-  .nav-item .txt .main { font-size:13.5px; font-weight:500; line-height:1.5; }
-  .nav-item .txt .sub { font-size:11.5px; color:rgba(255,255,255,.5); margin-top:2px; line-height:1.5; }
-  .nav-item.active .txt .sub { color:rgba(255,255,255,.65); }
-
-  .sidebar-footer { padding:14px 20px; border-top:1px solid rgba(255,255,255,.1); font-size:11px; color:rgba(255,255,255,.4); line-height:1.7; }
-
-  .content { flex:1; min-width:0; height:100%; overflow:auto; background:#eef1f6; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; padding:0; }
+  .app-shell { display:flex; min-height:100vh; font-family:"PingFang SC","Microsoft YaHei",Arial,sans-serif; }
+  .sidebar { width:220px; flex:none; background:#1f2430; color:#cfd3dc; padding:20px 0; }
+  .sidebar h1 { font-size:14px; color:#fff; padding:0 20px 16px; margin:0 0 8px; border-bottom:1px solid #333a4a; }
+  .nav-item { padding:12px 20px; font-size:13.5px; cursor:pointer; color:#aeb4c2; }
+  .nav-item:hover { background:#2a3040; color:#fff; }
+  .nav-item.active { background:#2f6fed; color:#fff; font-weight:500; }
+  .content { flex:1; min-width:0; overflow:auto; background:#eef1f6; }
   .panel { display:none; }
   .panel.active { display:block; }
-
 * { box-sizing: border-box; }
-  #panel-admin { margin:0; padding:24px; background:#f0f2f5; font-family:"PingFang SC","Microsoft YaHei",Arial,sans-serif; color:#303133; font-size:14px; }
-  #panel-admin .modal { max-width:1560px; margin:0 auto; background:#fff; border:1px solid #e4e7ed; border-radius:4px; }
-  #panel-admin .modal-header { display:flex; justify-content:space-between; align-items:center; padding:16px 24px; border-bottom:1px solid #ebeef5; font-size:16px; font-weight:600; }
-  #panel-admin .modal-header .close { cursor:pointer; color:#909399; font-size:18px; }
-  #panel-admin .modal-body { padding:20px 24px 32px; }
-  #panel-admin .tabs { display:flex; gap:32px; border-bottom:1px solid #ebeef5; margin-bottom:20px; }
-  #panel-admin .tabs span { padding:10px 2px; cursor:pointer; color:#606266; }
-  #panel-admin .tabs span.active { color:#1677ff; border-bottom:2px solid #1677ff; font-weight:500; }
-  #panel-admin .columns { display:flex; gap:40px; align-items:flex-start; }
-  #panel-admin .col-left { flex:1.35; min-width:0; }
-  #panel-admin .col-right { flex:1; min-width:0; border-left:1px dashed #e4e7ed; padding-left:40px; }
-  #panel-admin h3.section-title { font-size:14px; font-weight:600; margin:0 0 16px; }
-  #panel-admin .field { display:flex; align-items:flex-start; margin-bottom:16px; gap:12px; }
-  #panel-admin .field > label { width:150px; flex:none; text-align:right; color:#606266; padding-top:7px; font-size:13px; }
-  #panel-admin .field > label .req { color:#f56c6c; margin-right:2px; }
-  #panel-admin .field .control { flex:1; min-width:0; }
-  #panel-admin input[type=text], #panel-admin input[type=number], #panel-admin select, #panel-admin textarea {
+#panel-admin { margin:0; padding:24px; background:#f0f2f5; font-family:"PingFang SC","Microsoft YaHei",Arial,sans-serif; color:#303133; font-size:14px; }
+#panel-admin .modal { max-width:1560px; margin:0 auto; background:#fff; border:1px solid #e4e7ed; border-radius:4px; }
+#panel-admin .modal-header { display:flex; justify-content:space-between; align-items:center; padding:16px 24px; border-bottom:1px solid #ebeef5; font-size:16px; font-weight:600; }
+#panel-admin .modal-header .close { cursor:pointer; color:#909399; font-size:18px; }
+#panel-admin .modal-body { padding:20px 24px 32px; }
+#panel-admin .tabs { display:flex; gap:32px; border-bottom:1px solid #ebeef5; margin-bottom:20px; }
+#panel-admin .tabs span { padding:10px 2px; cursor:pointer; color:#606266; }
+#panel-admin .tabs span.active { color:#1677ff; border-bottom:2px solid #1677ff; font-weight:500; }
+#panel-admin .columns { display:flex; gap:40px; align-items:flex-start; }
+#panel-admin .col-left { flex:1.35; min-width:0; }
+#panel-admin .col-right { flex:1; min-width:0; border-left:1px dashed #e4e7ed; padding-left:40px; }
+#panel-admin h3.section-title { font-size:14px; font-weight:600; margin:0 0 16px; }
+#panel-admin .field { display:flex; align-items:flex-start; margin-bottom:16px; gap:12px; }
+#panel-admin .field > label { width:150px; flex:none; text-align:right; color:#606266; padding-top:7px; font-size:13px; }
+#panel-admin .field > label .req { color:#f56c6c; margin-right:2px; }
+#panel-admin .field .control { flex:1; min-width:0; }
+#panel-admin input[type=text], #panel-admin input[type=number], #panel-admin select, #panel-admin textarea {
     height:32px; border:1px solid #dcdfe6; border-radius:4px; padding:0 10px; font-size:13px; color:#303133; width:100%; background:#fff;
   }
-  #panel-admin input:disabled, #panel-admin select:disabled { background:#f5f7fa; color:#c0c4cc; }
-  #panel-admin textarea { height:auto; padding:8px 10px; line-height:1.5; resize:vertical; }
-  #panel-admin .hint { color:#c0c4cc; font-size:12px; margin-left:8px; white-space:nowrap; }
-  #panel-admin .inline-row { display:flex; align-items:center; gap:8px; }
-  #panel-admin .radio-group label { margin-right:24px; color:#303133; cursor:pointer; }
-  #panel-admin .radio-group input { margin-right:6px; vertical-align:-2px; }
-  #panel-admin .change-banner { display:flex; align-items:center; gap:8px; border:1px solid #d9a765; background:#fdf8ef; color:#8a5a2b; padding:10px 14px; border-radius:4px; cursor:pointer; font-size:13px; margin-bottom:20px; user-select:none; }
-  #panel-admin .change-banner:hover { background:#fbf1de; }
-  #panel-admin .change-banner-arrow { display:inline-block; font-size:11px; transition:transform .15s ease; transform:rotate(0deg); }
-  #panel-admin .change-banner.open .change-banner-arrow { transform:rotate(90deg); }
-  #panel-admin .change-banner-title { font-weight:600; }
-  #panel-admin .change-banner-sub { color:#b08a55; }
-  #panel-admin .change-banner-panel { display:none; margin:-8px 0 20px; padding:12px 16px; background:#fdf8ef; border:1px solid #d9a765; border-top:none; border-radius:0 0 4px 4px; font-size:12.5px; color:#7a5a34; line-height:1.9; }
-  #panel-admin .change-banner-panel ul { margin:0; padding-left:18px; }
-  #panel-admin .new-tag { display:inline-block; background:#1677ff; color:#fff; font-size:10px; font-weight:600; padding:1px 6px; border-radius:3px; vertical-align:2px; letter-spacing:.3px; }
-  #panel-admin .rule-table-wrap { border:1px solid #dcdfe6; border-radius:6px; padding:14px; }
-  #panel-admin .rule-table-actions { display:flex; justify-content:flex-end; gap:8px; margin-bottom:10px; }
-  #panel-admin .icon-btn { width:26px; height:26px; border-radius:50%; border:none; color:#fff; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
-  #panel-admin .icon-btn.add { background:#1677ff; }
-  #panel-admin .icon-btn.del { background:#f56c6c; }
-  #panel-admin table.rule-table { width:100%; border-collapse:collapse; table-layout:fixed; }
-  #panel-admin table.rule-table th { background:#fafafa; border:1px solid #ebeef5; padding:8px; font-weight:500; color:#606266; font-size:12.5px; text-align:left; }
-  #panel-admin table.rule-table td { border:1px solid #ebeef5; padding:6px 8px; }
-  #panel-admin table.rule-table input[type=number] { width:100%; }
-  #panel-admin .tier-cell { display:flex; align-items:center; gap:6px; }
-  #panel-admin .ge-symbol { color:#909399; font-size:13px; }
-  #panel-admin .editor-toolbar { border:1px solid #dcdfe6; border-bottom:none; padding:6px 8px; color:#909399; font-size:12px; border-radius:4px 4px 0 0; }
-  #panel-admin .editor-body { border:1px solid #dcdfe6; border-top:none; border-radius:0 0 4px 4px; min-height:110px; padding:10px; color:#c0c4cc; font-size:13px; }
-  #panel-admin .divider { border:none; border-top:1px dashed #e4e7ed; margin:20px 0; }
-
-  #panel-client { margin:0; padding:32px 16px; background:#eef1f6; font-family:"PingFang SC","Microsoft YaHei",Arial,sans-serif; color:#303133; }
-  #panel-client .mode-caption { max-width:1200px; margin:0 auto 20px; font-size:12px; color:#8a94a6; display:flex; align-items:center; gap:6px; justify-content:center; }
-  #panel-client .mode-caption .new-tag { display:inline-block; background:#1677ff; color:#fff; font-size:10px; font-weight:600; padding:1px 6px; border-radius:3px; }
-  #panel-client .change-banner { max-width:1200px; margin:0 auto 20px; display:flex; align-items:center; gap:8px; border:1px solid #d9a765; background:#fdf8ef; color:#8a5a2b; padding:10px 14px; border-radius:4px; cursor:pointer; font-size:13px; user-select:none; }
-  #panel-client .change-banner:hover { background:#fbf1de; }
-  #panel-client .change-banner-arrow { display:inline-block; font-size:11px; transition:transform .15s ease; }
-  #panel-client .change-banner-title { font-weight:600; }
-  #panel-client .change-banner-sub { color:#b08a55; }
-  #panel-client .change-banner-panel { display:none; max-width:1200px; margin:-8px auto 20px; padding:12px 16px; background:#fdf8ef; border:1px solid #d9a765; border-top:none; border-radius:0 0 4px 4px; font-size:12.5px; color:#7a5a34; line-height:1.9; }
-  #panel-client .change-banner-panel ul { margin:0; padding-left:18px; }
-  #panel-client .change-banner-panel li.todo { color:#996633; }
-  #panel-client .change-banner-panel li.todo b { color:#8a5a2b; }
-  #panel-client .compare-wrap { display:flex; gap:32px; justify-content:center; align-items:flex-start; flex-wrap:wrap; }
-  #panel-client .device-col { display:flex; flex-direction:column; align-items:center; gap:10px; }
-  #panel-client .device-label { font-size:13px; font-weight:600; color:#42566b; }
-  #panel-client .browser-frame { width:760px; max-width:92vw; background:#e3e6ec; border-radius:10px; padding-bottom:14px; box-shadow:0 4px 20px rgba(0,0,0,.08); }
-  #panel-client .browser-bar { display:flex; align-items:center; gap:6px; padding:10px 14px; }
-  #panel-client .browser-bar .dot { width:9px; height:9px; border-radius:50%; background:#c7cbd4; display:inline-block; }
-  #panel-client .browser-bar .addr { flex:1; margin-left:8px; height:20px; border-radius:10px; background:#fff; }
-  #panel-client .browser-frame .page { margin:0 14px; max-width:none; box-shadow:none; }
-  #panel-client .phone-frame { width:375px; max-width:92vw; background:#1c1f26; border-radius:34px; padding:14px 10px; box-shadow:0 6px 24px rgba(0,0,0,.15); position:relative; }
-  #panel-client .phone-notch { position:absolute; top:14px; left:50%; transform:translateX(-50%); width:120px; height:20px; background:#1c1f26; border-radius:0 0 14px 14px; z-index:2; }
-  #panel-client .phone-frame .page { max-width:none; border-radius:22px; overflow:hidden; }
-  #panel-client .page { background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,.06); }
-  #panel-client .nav-bar { display:flex; align-items:center; padding:14px 16px; background:#fff; border-bottom:1px solid #f0f2f5; }
-  #panel-client .nav-back { font-size:20px; color:#303133; width:24px; line-height:1; }
-  #panel-client .nav-title { flex:1; text-align:center; font-size:15px; font-weight:600; color:#303133; margin-right:24px; }
-  #panel-client .nav-icons { display:flex; gap:6px; }
-  #panel-client .nav-icon-dot { width:22px; height:16px; border-radius:4px; background:#e4e7ed; }
-  #panel-client .nav-bar.pc .nav-title { margin-right:0; }
-  #panel-client .hero { position:relative; background:linear-gradient(135deg,#2b62e8,#4f8ef7); color:#fff; padding:28px 24px 22px; overflow:hidden; }
-  #panel-client .hero-badge { position:absolute; right:-30px; top:-30px; width:220px; height:220px; border-radius:50%; background:rgba(255,255,255,.08); }
-  #panel-client .hero-title { position:relative; font-size:22px; font-weight:700; line-height:1.5; margin:0 0 10px; max-width:420px; }
-  #panel-client .hero-desc { position:relative; font-size:13px; line-height:1.8; color:rgba(255,255,255,.9); max-width:460px; margin:0 0 6px; }
-  #panel-client .hero-meta { position:relative; font-size:12px; line-height:1.8; color:rgba(255,255,255,.75); max-width:460px; }
-  #panel-client .hero-meta b { color:#fff; font-weight:500; }
-  #panel-client .status-text { padding:16px 24px 4px; font-size:13.5px; line-height:1.8; color:#42566b; }
-  #panel-client .status-text b { color:#1677ff; }
-  #panel-client .claim-card { margin:14px 24px 0; background:#f5f8ff; border:1px solid #e1eaff; border-radius:10px; padding:16px 18px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
-  #panel-client .claim-card-text { font-size:13px; color:#606266; line-height:1.7; }
-  #panel-client .claim-btn { flex:none; height:38px; padding:0 22px; border-radius:19px; border:none; background:#1677ff; color:#fff; font-size:13.5px; font-weight:500; cursor:pointer; }
-  #panel-client .claim-btn:hover { background:#3388ff; }
-  #panel-client .claim-btn.disabled, #panel-client .claim-btn.disabled:hover { background:#d3d6dc; color:#fff; cursor:not-allowed; }
-  #panel-client .section { margin:22px 24px 0; }
-  #panel-client .section-head { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
-  #panel-client .section-head .line { flex:1; height:1px; background:linear-gradient(to right,transparent,#c7d6f2); }
-  #panel-client .section-head .line.rev { background:linear-gradient(to left,transparent,#c7d6f2); }
-  #panel-client .section-head .title { font-size:15px; font-weight:600; color:#1c3a6b; white-space:nowrap; }
-  #panel-client .progress-card { background:#fff; border:1px solid #eef1f6; border-radius:10px; padding:20px 18px 16px; }
-  #panel-client .tier-info { background:#f5f8ff; border-radius:8px; padding:12px 14px; }
-  #panel-client .tier-info-next { font-size:13px; color:#1677ff; font-weight:600; margin-bottom:10px; }
-  #panel-client .tier-info-row { display:flex; align-items:center; gap:10px; }
-  #panel-client .tier-info-label { flex:none; font-size:12.5px; color:#606266; }
-  #panel-client .tier-info-track { flex:1; height:6px; border-radius:3px; background:#e0e9fb; overflow:hidden; }
-  #panel-client .tier-info-fill { height:100%; background:#1677ff; border-radius:3px; }
-  #panel-client .tier-info-need { flex:none; font-size:12.5px; color:#1677ff; font-weight:500; }
-  #panel-client .rule-table { width:100%; border-collapse:collapse; overflow:hidden; border-radius:8px; }
-  #panel-client .rule-table th { background:#2f6fed; color:#fff; font-size:12.5px; font-weight:500; padding:11px 8px; text-align:center; }
-  #panel-client .rule-table td { font-size:13px; color:#42566b; padding:11px 8px; text-align:center; border-bottom:1px solid #eef1f6; background:#fff; }
-  #panel-client .rule-table tr:nth-child(even) td { background:#f8faff; }
-  #panel-client .rule-table td.pay { color:#1677ff; font-weight:500; }
-  #panel-client .terms-block { margin-top:14px; padding:14px 16px; background:#f7f9fc; border-radius:8px; font-size:12.5px; color:#606266; line-height:1.9; }
-  #panel-client .terms-block p { margin:0; }
-  #panel-client .terms-block .terms-title { font-weight:600; color:#42566b; margin:0 0 2px; }
-  #panel-client .terms-block .terms-title:not(:first-child) { margin-top:10px; }
-  #panel-client .page { padding-bottom:24px; }
-  #panel-client .page.h5 .hero { padding:22px 16px 18px; }
-  #panel-client .page.h5 .hero-title { font-size:17px; }
-  #panel-client .page.h5 .hero-desc, #panel-client .page.h5 .hero-meta { font-size:11.5px; }
-  #panel-client .page.h5 .status-text { padding:12px 16px 2px; font-size:12.5px; }
-  #panel-client .page.h5 .claim-card { margin:12px 16px 0; flex-direction:column; align-items:stretch; gap:10px; padding:14px; }
-  #panel-client .page.h5 .claim-btn { width:100%; }
-  #panel-client .page.h5 .section { margin:18px 16px 0; }
-  #panel-client .page.h5 .section-head .title { font-size:14px; }
-  #panel-client .page.h5 .progress-card { padding:14px 12px 12px; }
-  #panel-client .page.h5 .tier-info-next { font-size:12px; }
-  #panel-client .page.h5 .tier-info-label, #panel-client .page.h5 .tier-info-need { font-size:11.5px; }
-  #panel-client .page.h5 .rule-table th, #panel-client .page.h5 .rule-table td { font-size:11px; padding:8px 4px; }
-  #panel-client .page.h5 .terms-block { font-size:11.5px; padding:12px; }
+#panel-admin input:disabled, #panel-admin select:disabled { background:#f5f7fa; color:#c0c4cc; }
+#panel-admin textarea { height:auto; padding:8px 10px; line-height:1.5; resize:vertical; }
+#panel-admin .hint { color:#c0c4cc; font-size:12px; margin-left:8px; white-space:nowrap; }
+#panel-admin .inline-row { display:flex; align-items:center; gap:8px; }
+#panel-admin .radio-group label { margin-right:24px; color:#303133; cursor:pointer; }
+#panel-admin .radio-group input { margin-right:6px; vertical-align:-2px; }
+#panel-admin .ms-field { position:relative; flex:1; min-width:0; }
+#panel-admin .ms-trigger { min-height:32px; border:1px solid #dcdfe6; border-radius:4px; padding:3px 30px 3px 6px; font-size:13px; display:flex; align-items:center; cursor:pointer; background:#fff; position:relative; }
+#panel-admin .ms-field.error .ms-trigger { border-color:#f56c6c; }
+#panel-admin .ms-field.open .ms-trigger { border-color:#1677ff; }
+#panel-admin .ms-tags { flex:1; min-width:0; display:flex; align-items:center; gap:6px; overflow:hidden; }
+#panel-admin .ms-placeholder { color:#a8abb2; font-size:13px; padding-left:4px; }
+#panel-admin .ms-tag { display:inline-flex; align-items:center; gap:4px; background:#f4f4f5; border:1px solid #e9e9eb; border-radius:4px; padding:2px 4px 2px 8px; font-size:12px; color:#606266; max-width:150px; flex:none; }
+#panel-admin .ms-tag-text { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+#panel-admin .ms-tag-close { display:flex; align-items:center; justify-content:center; width:14px; height:14px; border-radius:50%; color:#909399; cursor:pointer; font-size:12px; line-height:1; flex:none; }
+#panel-admin .ms-tag-close:hover { background:#c0c4cc; color:#fff; }
+#panel-admin .ms-tag-more { flex:none; font-size:12px; color:#606266; background:#f4f4f5; border:1px solid #e9e9eb; border-radius:4px; padding:2px 6px; }
+#panel-admin .ms-arrow { position:absolute; right:10px; color:#c0c4cc; font-size:11px; transition:transform .15s; flex:none; }
+#panel-admin .ms-field.open .ms-arrow { transform:rotate(180deg); color:#1677ff; }
+#panel-admin .ms-panel { display:none; position:absolute; top:36px; left:0; right:0; background:#fff; border:1px solid #e4e7ed; border-radius:6px; box-shadow:0 4px 16px rgba(0,0,0,.12); max-height:260px; overflow-y:auto; z-index:20; padding:4px 0; }
+#panel-admin .ms-field.open .ms-panel { display:block; }
+#panel-admin .ms-option { padding:9px 14px; font-size:13px; color:#303133; cursor:pointer; }
+#panel-admin .ms-option:hover { background:#f5f7fa; }
+#panel-admin .ms-option.selected { background:#ecf5ff; color:#1677ff; }
+#panel-admin .ms-option.all-option { font-weight:500; }
+#panel-admin .ms-divider { height:1px; background:#ebeef5; margin:4px 0; }
+#panel-admin .ms-empty { padding:12px 14px; font-size:12px; color:#c0c4cc; }
+#panel-admin .ms-error-text { display:none; color:#f56c6c; font-size:12px; margin-top:4px; }
+#panel-admin .change-banner { display:flex; align-items:center; gap:8px; border:1px solid #d9a765; background:#fdf8ef; color:#8a5a2b; padding:10px 14px; border-radius:4px; cursor:pointer; font-size:13px; margin-bottom:20px; user-select:none; }
+#panel-admin .change-banner:hover { background:#fbf1de; }
+#panel-admin .change-banner-arrow { display:inline-block; font-size:11px; transition:transform .15s ease; transform:rotate(0deg); }
+#panel-admin .change-banner.open .change-banner-arrow { transform:rotate(90deg); }
+#panel-admin .change-banner-title { font-weight:600; }
+#panel-admin .change-banner-sub { color:#b08a55; }
+#panel-admin .change-banner-panel { display:none; margin:-8px 0 20px; padding:12px 16px; background:#fdf8ef; border:1px solid #d9a765; border-top:none; border-radius:0 0 4px 4px; font-size:12.5px; color:#7a5a34; line-height:1.9; }
+#panel-admin .change-banner-panel ul { margin:0; padding-left:18px; }
+#panel-admin .new-tag { display:inline-block; background:#f56c6c; color:#fff; font-size:10px; font-weight:600; padding:1px 6px; border-radius:3px; vertical-align:2px; letter-spacing:.3px; }
+#panel-admin .rule-table-wrap { border:1px solid #dcdfe6; border-radius:6px; padding:14px; }
+#panel-admin .rule-table-actions { display:flex; justify-content:flex-end; gap:8px; margin-bottom:10px; }
+#panel-admin .icon-btn { width:26px; height:26px; border-radius:50%; border:none; color:#fff; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+#panel-admin .icon-btn.add { background:#1677ff; }
+#panel-admin .icon-btn.del { background:#f56c6c; }
+#panel-admin table.rule-table { width:100%; border-collapse:collapse; table-layout:fixed; }
+#panel-admin table.rule-table th { background:#fafafa; border:1px solid #ebeef5; padding:8px; font-weight:500; color:#606266; font-size:12.5px; text-align:left; }
+#panel-admin table.rule-table td { border:1px solid #ebeef5; padding:6px 8px; }
+#panel-admin table.rule-table input[type=number] { width:100%; }
+#panel-admin .tier-cell { display:flex; align-items:center; gap:6px; }
+#panel-admin .ge-symbol { color:#909399; font-size:13px; }
+#panel-admin .editor-toolbar { border:1px solid #dcdfe6; border-bottom:none; padding:6px 8px; color:#909399; font-size:12px; border-radius:4px 4px 0 0; }
+#panel-admin .editor-body { border:1px solid #dcdfe6; border-top:none; border-radius:0 0 4px 4px; min-height:110px; padding:10px; color:#c0c4cc; font-size:13px; }
+#panel-admin .divider { border:none; border-top:1px dashed #e4e7ed; margin:20px 0; }
+* { box-sizing:border-box; }
+#panel-client { margin:0; padding:32px 16px; background:#eef1f6; font-family:"PingFang SC","Microsoft YaHei",Arial,sans-serif; color:#303133; }
+#panel-client .mode-caption { max-width:1200px; margin:0 auto 20px; font-size:12px; color:#8a94a6; display:flex; align-items:center; gap:6px; justify-content:center; }
+#panel-client .mode-caption .new-tag { display:inline-block; background:#f56c6c; color:#fff; font-size:10px; font-weight:600; padding:1px 6px; border-radius:3px; }
+#panel-client .change-banner { max-width:1200px; margin:0 auto 20px; display:flex; align-items:center; gap:8px; border:1px solid #d9a765; background:#fdf8ef; color:#8a5a2b; padding:10px 14px; border-radius:4px; cursor:pointer; font-size:13px; user-select:none; }
+#panel-client .change-banner:hover { background:#fbf1de; }
+#panel-client .change-banner-arrow { display:inline-block; font-size:11px; transition:transform .15s ease; }
+#panel-client .change-banner-title { font-weight:600; }
+#panel-client .change-banner-sub { color:#b08a55; }
+#panel-client .change-banner-panel { display:none; max-width:1200px; margin:-8px auto 20px; padding:12px 16px; background:#fdf8ef; border:1px solid #d9a765; border-top:none; border-radius:0 0 4px 4px; font-size:12.5px; color:#7a5a34; line-height:1.9; }
+#panel-client .change-banner-panel ul { margin:0; padding-left:18px; }
+#panel-client .change-banner-panel li.todo { color:#996633; }
+#panel-client .change-banner-panel li.todo b { color:#8a5a2b; }
+#panel-client .compare-wrap { display:flex; gap:32px; justify-content:center; align-items:flex-start; flex-wrap:wrap; }
+#panel-client .device-col { display:flex; flex-direction:column; align-items:center; gap:10px; }
+#panel-client .device-label { font-size:13px; font-weight:600; color:#42566b; }
+#panel-client .browser-frame { width:760px; max-width:92vw; background:#e3e6ec; border-radius:10px; padding-bottom:14px; box-shadow:0 4px 20px rgba(0,0,0,.08); }
+#panel-client .browser-bar { display:flex; align-items:center; gap:6px; padding:10px 14px; }
+#panel-client .browser-bar .dot { width:9px; height:9px; border-radius:50%; background:#c7cbd4; display:inline-block; }
+#panel-client .browser-bar .addr { flex:1; margin-left:8px; height:20px; border-radius:10px; background:#fff; }
+#panel-client .browser-frame .page { margin:0 14px; max-width:none; box-shadow:none; }
+#panel-client .phone-frame { width:375px; max-width:92vw; background:#1c1f26; border-radius:34px; padding:14px 10px; box-shadow:0 6px 24px rgba(0,0,0,.15); position:relative; }
+#panel-client .phone-notch { position:absolute; top:14px; left:50%; transform:translateX(-50%); width:120px; height:20px; background:#1c1f26; border-radius:0 0 14px 14px; z-index:2; }
+#panel-client .phone-frame .page { max-width:none; border-radius:22px; overflow:hidden; }
+#panel-client .page { background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,.06); }
+#panel-client .nav-bar { display:flex; align-items:center; padding:14px 16px; background:#fff; border-bottom:1px solid #f0f2f5; }
+#panel-client .nav-back { font-size:20px; color:#303133; width:24px; line-height:1; }
+#panel-client .nav-title { flex:1; text-align:center; font-size:15px; font-weight:600; color:#303133; margin-right:24px; }
+#panel-client .nav-icons { display:flex; gap:6px; }
+#panel-client .nav-icon-dot { width:22px; height:16px; border-radius:4px; background:#e4e7ed; }
+#panel-client .nav-bar.pc .nav-title { margin-right:0; }
+#panel-client .hero { position:relative; background:linear-gradient(135deg,#2b62e8,#4f8ef7); color:#fff; padding:28px 24px 22px; overflow:hidden; }
+#panel-client .hero-badge { position:absolute; right:-30px; top:-30px; width:220px; height:220px; border-radius:50%; background:rgba(255,255,255,.08); }
+#panel-client .hero-title { position:relative; font-size:22px; font-weight:700; line-height:1.5; margin:0 0 10px; max-width:420px; }
+#panel-client .hero-desc { position:relative; font-size:13px; line-height:1.8; color:rgba(255,255,255,.9); max-width:460px; margin:0 0 6px; }
+#panel-client .hero-meta { position:relative; font-size:12px; line-height:1.8; color:rgba(255,255,255,.75); max-width:460px; }
+#panel-client .hero-meta b { color:#fff; font-weight:500; }
+#panel-client .status-text { padding:16px 24px 4px; font-size:13.5px; line-height:1.8; color:#42566b; }
+#panel-client .status-text b { color:#1677ff; }
+#panel-client .claim-card { margin:14px 24px 0; background:#f5f8ff; border:1px solid #e1eaff; border-radius:10px; padding:16px 18px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+#panel-client .claim-card-text { font-size:13px; color:#606266; line-height:1.7; }
+#panel-client .claim-btn { flex:none; height:38px; padding:0 22px; border-radius:19px; border:none; background:#1677ff; color:#fff; font-size:13.5px; font-weight:500; cursor:pointer; }
+#panel-client .claim-btn:hover { background:#3388ff; }
+#panel-client .claim-btn.disabled, #panel-client .claim-btn.disabled:hover { background:#d3d6dc; color:#fff; cursor:not-allowed; }
+#panel-client .section { margin:22px 24px 0; }
+#panel-client .section-head { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+#panel-client .section-head .line { flex:1; height:1px; background:linear-gradient(to right,transparent,#c7d6f2); }
+#panel-client .section-head .line.rev { background:linear-gradient(to left,transparent,#c7d6f2); }
+#panel-client .section-head .title { font-size:15px; font-weight:600; color:#1c3a6b; white-space:nowrap; }
+#panel-client .progress-card { background:#fff; border:1px solid #eef1f6; border-radius:10px; padding:20px 18px 16px; }
+#panel-client .tier-info { background:#f5f8ff; border-radius:8px; padding:12px 14px; }
+#panel-client .tier-info-next { font-size:13px; color:#1677ff; font-weight:600; margin-bottom:10px; }
+#panel-client .tier-info-row { display:flex; align-items:center; gap:10px; }
+#panel-client .tier-info-label { flex:none; font-size:12.5px; color:#606266; }
+#panel-client .tier-info-track { flex:1; height:6px; border-radius:3px; background:#e0e9fb; overflow:hidden; }
+#panel-client .tier-info-fill { height:100%; background:#1677ff; border-radius:3px; }
+#panel-client .tier-info-need { flex:none; font-size:12.5px; color:#1677ff; font-weight:500; }
+#panel-client .rule-table { width:100%; border-collapse:collapse; overflow:hidden; border-radius:8px; }
+#panel-client .rule-table th { background:#2f6fed; color:#fff; font-size:12.5px; font-weight:500; padding:11px 8px; text-align:center; }
+#panel-client .rule-table td { font-size:13px; color:#42566b; padding:11px 8px; text-align:center; border-bottom:1px solid #eef1f6; background:#fff; }
+#panel-client .rule-table tr:nth-child(even) td { background:#f8faff; }
+#panel-client .rule-table td.pay { color:#1677ff; font-weight:500; }
+#panel-client .terms-block { margin-top:14px; padding:14px 16px; background:#f7f9fc; border-radius:8px; font-size:12.5px; color:#606266; line-height:1.9; }
+#panel-client .terms-block p { margin:0; }
+#panel-client .terms-block .terms-title { font-weight:600; color:#42566b; margin:0 0 2px; }
+#panel-client .terms-block .terms-title:not(:first-child) { margin-top:10px; }
+#panel-client .page { padding-bottom:24px; }
+#panel-client .page.h5 .hero { padding:22px 16px 18px; }
+#panel-client .page.h5 .hero-title { font-size:17px; }
+#panel-client .page.h5 .hero-desc, #panel-client .page.h5 .hero-meta { font-size:11.5px; }
+#panel-client .page.h5 .status-text { padding:12px 16px 2px; font-size:12.5px; }
+#panel-client .page.h5 .claim-card { margin:12px 16px 0; flex-direction:column; align-items:stretch; gap:10px; padding:14px; }
+#panel-client .page.h5 .claim-btn { width:100%; }
+#panel-client .page.h5 .section { margin:18px 16px 0; }
+#panel-client .page.h5 .section-head .title { font-size:14px; }
+#panel-client .page.h5 .progress-card { padding:14px 12px 12px; }
+#panel-client .page.h5 .tier-info-next { font-size:12px; }
+#panel-client .page.h5 .tier-info-label, #panel-client .page.h5 .tier-info-need { font-size:11.5px; }
+#panel-client .page.h5 .rule-table th, #panel-client .page.h5 .rule-table td { font-size:11px; padding:8px 4px; }
+#panel-client .page.h5 .terms-block { font-size:11.5px; padding:12px; }
 </style>
 </head>
 <body>
-
 <div class="app-shell">
   <div class="sidebar">
-    <div class="sidebar-header">
-      <div class="title">流水活动 · 按流水模式</div>
-      <div class="sub">左侧切换查看后台配置 / 客户端展示</div>
-    </div>
-    <div class="nav-list">
-      <div class="nav-item active" data-panel="panel-admin" onclick="switchView(this)">
-        <span class="num">1</span>
-        <span class="txt">
-          <div class="main">活动配置-流水活动</div>
-          <div class="sub">新增"按流水"单选项，档位规则配置</div>
-        </span>
-      </div>
-      <div class="nav-item" data-panel="panel-client" onclick="switchView(this)">
-        <span class="num">2</span>
-        <span class="txt">
-          <div class="main">客户端展示（PC / H5）</div>
-          <div class="sub">按流水模式的用户端页面，双端对比</div>
-        </span>
-      </div>
-    </div>
-    <div class="sidebar-footer">供开发查阅使用<br>点击左侧菜单切换视图</div>
+    <h1>流水活动原型导航</h1>
+    <div class="nav-item active" data-panel="panel-admin" onclick="switchView(this)">活动配置-流水活动</div>
+    <div class="nav-item" data-panel="panel-client" onclick="switchView(this)">客户端展示（PC / H5）</div>
   </div>
-
   <div class="content">
     <div class="panel active" id="panel-admin">
 
@@ -200,12 +189,13 @@
       <span>多语言设置</span>
     </div>
 
-    <div class="change-banner" id="changeBanner-admin" onclick="toggleChangeBannerAdmin()">
-      <span class="change-banner-arrow" id="changeBannerArrow-admin">▸</span>
-      <span class="change-banner-title">本次改动说明（活动计算规则新增"按流水"模式）</span>
+    <div class="change-banner" id="changeBannerAdmin" onclick="toggleChangeBannerAdmin()">
+      <span class="change-banner-arrow" id="changeBannerArrowAdmin">▸</span>
+      <span class="change-banner-title">本次改动说明（活动计算规则新增"按流水"模式 / 场馆统计范围优化）</span>
       <span class="change-banner-sub">— 点击展开查看变更详情</span>
     </div>
-    <div class="change-banner-panel" id="changeBannerPanel-admin">
+    <div class="change-banner-panel" id="changeBannerPanelAdmin">
+      <div style="font-weight:600;color:#8a5a2b;margin-bottom:2px">一、活动计算规则新增"按流水"模式</div>
       <ul>
         <li>「活动计算规则」新增单选项「按流水」，与原有「按排名」二选一；</li>
         <li>按流水模式不参与排名，仅按会员在统计周期内的有效流水是否达到某"档位"门槛来判断；</li>
@@ -213,6 +203,14 @@
         <li>会员有效流水达到（≥）某档位门槛，即可领取该档位对应"彩金金额"；</li>
         <li>若流水同时达到多个档位门槛，只发放当前达到的最高档位彩金，不与较低档位累计发放；</li>
         <li>彩金稽核倍数：规则与"按排名"模式一致。</li>
+      </ul>
+      <div style="font-weight:600;color:#8a5a2b;margin:10px 0 2px">二、本活动场馆统计范围优化</div>
+      <ul>
+        <li>「游戏分类」由单选调整为多选；</li>
+        <li>「游戏场馆」可选项跟随已选「游戏分类」联动更新（示例数据，实际以真实场馆配置为准）；</li>
+        <li>新增「子游戏」选择项，仅在「游戏分类」含"彩票"时展示，与「游戏场馆」的选择无关（示例数据，实际以真实场馆/子游戏配置为准）；</li>
+        <li>「游戏分类」「游戏场馆」「子游戏」三个选择框并排展示在同一行；</li>
+        <li>「游戏分类」「游戏场馆」「子游戏」均支持"全选"；</li>
       </ul>
     </div>
 
@@ -228,7 +226,35 @@
         <div class="field"><label><span class="req">*</span>活动起止日期</label><div class="control inline-row"><input type="text" disabled placeholder="活动开始日期"><span>~</span><input type="text" disabled placeholder="活动结束日期"><label style="width:auto;white-space:nowrap"><input type="checkbox" disabled> C端用"长期活动"格式显示</label></div></div>
         <div class="field"><label>活动预热日期</label><div class="control inline-row"><select disabled><option>请选择预热日期</option></select><label style="width:auto;white-space:nowrap"><input type="checkbox" disabled> 预热期置顶</label></div></div>
         <div class="field"><label>彩金申领日期</label><div class="control"><select disabled><option>请选择奖金申领日期</option></select></div></div>
-        <div class="field"><label><span class="req">*</span>本活动场馆统计范围</label><div class="control inline-row"><select disabled><option>请选择游戏类型</option></select><select disabled><option>请选择游戏场馆，可多选</option></select></div></div>
+        <div class="field">
+          <label><span class="req">*</span>本活动场馆统计范围 <span class="new-tag">改</span></label>
+          <div class="control">
+            <div class="inline-row" style="align-items:flex-start">
+              <div class="ms-field" id="msCategoryField">
+                <div class="ms-trigger" onclick="toggleMs('category')">
+                  <div class="ms-tags" id="msCategoryTags"><span class="ms-placeholder">请选择游戏分类，可多选</span></div>
+                  <span class="ms-arrow">⌄</span>
+                </div>
+                <div class="ms-panel" id="msCategoryPanel"></div>
+              </div>
+              <div class="ms-field" id="msVenueField">
+                <div class="ms-trigger" onclick="toggleMs('venue')">
+                  <div class="ms-tags" id="msVenueTags"><span class="ms-placeholder">请选择游戏场馆，可多选</span></div>
+                  <span class="ms-arrow">⌄</span>
+                </div>
+                <div class="ms-panel" id="msVenuePanel"></div>
+              </div>
+              <div class="ms-field" id="msSubgameField" style="display:none">
+                <div class="ms-trigger" onclick="toggleMs('subgame')">
+                  <div class="ms-tags" id="msSubgameTags"><span class="ms-placeholder">请选择子游戏，可多选</span></div>
+                  <span class="ms-arrow">⌄</span>
+                </div>
+                <div class="ms-panel" id="msSubgamePanel"></div>
+              </div>
+            </div>
+            <div class="ms-error-text" id="msErrorText">参与本活动的游戏统计范围不能为空</div>
+          </div>
+        </div>
         <div class="field"><label><span class="req">*</span>最少基础有效流水</label><div class="control"><input type="number" value="0.00"><div style="font-size:12px;color:#c0c4cc;margin-top:4px">按排名 / 按流水两种模式共用此字段</div></div></div>
 
         <div class="field">
@@ -236,7 +262,7 @@
           <div class="control">
             <div class="radio-group" style="margin-bottom:12px">
               <label><input type="radio" name="calcMode" value="rank" checked onclick="switchMode('rank')">按排名</label>
-              <label><input type="radio" name="calcMode" value="flow" onclick="switchMode('flow')">按流水 <span class="new-tag">NEW</span></label>
+              <label><input type="radio" name="calcMode" value="flow" onclick="switchMode('flow')">按流水 <span class="new-tag">增</span></label>
             </div>
 
             <div class="rule-table-wrap">
@@ -305,109 +331,21 @@
   </div>
 </div>
 
-<script>
-var rankRows = [
-  ["一等奖","1","1","100.00","8.00"],
-  ["二等奖","2","4","60.00","8.00"],
-  ["三等奖","5","20","30.00","8.00"],
-  ["四等奖","21","50","10.00","8.00"],
-  ["五等奖","51","1000","2.00","8.00"]
-];
-var flowRowsInit = [
-  ["一档","10000","16.00","8.00"],
-  ["二档","26666","26.00","8.00"],
-  ["三档","36666","36.00","8.00"],
-  ["四档","66666","56.00","8.00"],
-  ["五档","166666","188.00","8.00"],
-  ["六档","366666","388.00","8.00"],
-  ["七档","666666","888.00","8.00"],
-  ["八档","1066666","1688.00","8.00"]
-];
-var MAX_TIERS = 9;
 
-function cell(html){ var td=document.createElement('td'); td.innerHTML = html; return td; }
-function numInput(v,w){ return '<input type="number" value="'+v+'" style="width:'+(w||'100%')+'px">'; }
-
-var rankLabels = ["一等奖","二等奖","三等奖","四等奖","五等奖","六等奖","七等奖","八等奖","九等奖"];
-var flowLabels = ["一档","二档","三档","四档","五档","六档","七档","八档","九档"];
-var rankBody = document.getElementById('rankBody');
-function addRankRow(r){
-  var tr = document.createElement('tr');
-  tr.appendChild(cell('<span>'+r[0]+'</span>'));
-  tr.appendChild(cell('<div class="tier-cell">'+numInput(r[1],60)+'<span>~</span>'+numInput(r[2],60)+'</div>'));
-  tr.appendChild(cell(numInput(r[3],90)));
-  tr.appendChild(cell('<div class="tier-cell">'+numInput(r[4],60)+'<span>倍</span></div>'));
-  rankBody.appendChild(tr);
-}
-rankRows.forEach(addRankRow);
-
-var flowBody = document.getElementById('flowBody');
-function flowTierCount(){ return flowBody.children.length; }
-function addFlowRow(r){
-  var tr = document.createElement('tr');
-  tr.appendChild(cell('<span>'+r[0]+'</span>'));
-  tr.appendChild(cell('<div class="tier-cell"><span class="ge-symbol">≥</span>'+numInput(r[1],130)+'<span style="color:#909399;font-size:12px">即发放</span></div>'));
-  tr.appendChild(cell(numInput(r[2],90)));
-  tr.appendChild(cell('<div class="tier-cell">'+numInput(r[3],60)+'<span>倍</span></div>'));
-  flowBody.appendChild(tr);
-}
-flowRowsInit.forEach(addFlowRow);
-
-var currentMode = 'rank';
-
-function addCurrentTier(){
-  if (currentMode === 'flow') {
-    if (flowTierCount() >= MAX_TIERS) { alert('最多支持设置 '+MAX_TIERS+' 个档位'); return; }
-    var idx = flowTierCount();
-    var label = flowLabels[idx] || ('第'+(idx+1)+'档');
-    addFlowRow([label,'0','0.00','8.00']);
-  } else {
-    if (rankBody.children.length >= MAX_TIERS) { alert('最多支持设置 '+MAX_TIERS+' 个等级（九等奖）'); return; }
-    var idx = rankBody.children.length;
-    var label = rankLabels[idx] || ('第'+(idx+1)+'等奖');
-    addRankRow([label,'0','0','0.00','8.00']);
-  }
-}
-
-function removeLastTier(){
-  var body = currentMode === 'flow' ? flowBody : rankBody;
-  if (body.children.length <= 1) { alert('至少保留 1 档'); return; }
-  body.removeChild(body.lastElementChild);
-}
-
-function switchMode(mode){
-  currentMode = mode;
-  var isRank = mode === 'rank';
-  document.getElementById('rankTable').style.display = isRank ? '' : 'none';
-  document.getElementById('flowTable').style.display = isRank ? 'none' : '';
-}
-
-function toggleChangeBannerAdmin(){
-  var banner = document.getElementById('changeBanner-admin');
-  var panel = document.getElementById('changeBannerPanel-admin');
-  var arrow = document.getElementById('changeBannerArrow-admin');
-  var open = panel.style.display === 'block';
-  panel.style.display = open ? 'none' : 'block';
-  banner.classList.toggle('open', !open);
-  arrow.textContent = '▸';
-}
-
-switchMode('rank');
-</script>
 
 
     </div>
     <div class="panel" id="panel-client">
 
 
-<div class="mode-caption"><span class="new-tag">NEW</span> 客户端活动展示 · 按流水模式 · PC 与 H5 对比（申领日期未开始，领取按钮置灰）</div>
+<div class="mode-caption"><span class="new-tag">增</span> 客户端活动展示 · 按流水模式 · PC 与 H5 对比（申领日期未开始，领取按钮置灰）</div>
 
-<div class="change-banner" id="changeBanner-client" onclick="toggleChangeBannerClient()">
-  <span class="change-banner-arrow" id="changeBannerArrow-client">▸</span>
+<div class="change-banner" id="changeBannerClient" onclick="toggleChangeBannerClient()">
+  <span class="change-banner-arrow" id="changeBannerArrowClient">▸</span>
   <span class="change-banner-title">本次改动说明（客户端新增"按流水"模式展示）</span>
   <span class="change-banner-sub">— 点击展开查看变更详情</span>
 </div>
-<div class="change-banner-panel" id="changeBannerPanel-client">
+<div class="change-banner-panel" id="changeBannerPanelClient">
   <ul>
     <li>客户端新增"按流水"模式的完整展示，对应后台「活动计算规则」新增的"按流水"单选项；</li>
     <li>原按排名模式的"今日/昨日赛事榜单"排行榜模块，流水模式下没有排名概念，替换为"我的档位进度"模块（单条进度条 + 距离下一档提示，突出还差多少流水即可解锁下一档，用于激励继续投注），PC 与 H5 两端保持一致展示；</li>
@@ -560,15 +498,7 @@ switchMode('rank');
 
 </div>
 
-<script>
-function toggleChangeBannerClient(){
-  var panel = document.getElementById('changeBannerPanel-client');
-  var arrow = document.getElementById('changeBannerArrow-client');
-  var open = panel.style.display === 'block';
-  panel.style.display = open ? 'none' : 'block';
-  arrow.style.transform = open ? 'rotate(0deg)' : 'rotate(90deg)';
-}
-</script>
+
 
 
     </div>
@@ -577,13 +507,307 @@ function toggleChangeBannerClient(){
 
 <script>
 function switchView(el){
-  document.querySelectorAll('.nav-item').forEach(function(item){ item.classList.remove('active'); });
-  el.classList.add('active');
-  var target = el.getAttribute('data-panel');
+  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
   document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
-  document.getElementById(target).classList.add('active');
+  el.classList.add('active');
+  document.getElementById(el.dataset.panel).classList.add('active');
 }
-</script>
 
+var rankRows = [
+  ["一等奖","1","1","100.00","8.00"],
+  ["二等奖","2","4","60.00","8.00"],
+  ["三等奖","5","20","30.00","8.00"],
+  ["四等奖","21","50","10.00","8.00"],
+  ["五等奖","51","1000","2.00","8.00"]
+];
+var flowRowsInit = [
+  ["一档","10000","16.00","8.00"],
+  ["二档","26666","26.00","8.00"],
+  ["三档","36666","36.00","8.00"],
+  ["四档","66666","56.00","8.00"],
+  ["五档","166666","188.00","8.00"],
+  ["六档","366666","388.00","8.00"],
+  ["七档","666666","888.00","8.00"],
+  ["八档","1066666","1688.00","8.00"]
+];
+var MAX_TIERS = 9;
+
+function cell(html){ var td=document.createElement('td'); td.innerHTML = html; return td; }
+function numInput(v,w){ return '<input type="number" value="'+v+'" style="width:'+(w||'100%')+'px">'; }
+
+var rankLabels = ["一等奖","二等奖","三等奖","四等奖","五等奖","六等奖","七等奖","八等奖","九等奖"];
+var flowLabels = ["一档","二档","三档","四档","五档","六档","七档","八档","九档"];
+var rankBody = document.getElementById('rankBody');
+function addRankRow(r){
+  var tr = document.createElement('tr');
+  tr.appendChild(cell('<span>'+r[0]+'</span>'));
+  tr.appendChild(cell('<div class="tier-cell">'+numInput(r[1],60)+'<span>~</span>'+numInput(r[2],60)+'</div>'));
+  tr.appendChild(cell(numInput(r[3],90)));
+  tr.appendChild(cell('<div class="tier-cell">'+numInput(r[4],60)+'<span>倍</span></div>'));
+  rankBody.appendChild(tr);
+}
+rankRows.forEach(addRankRow);
+
+var flowBody = document.getElementById('flowBody');
+function flowTierCount(){ return flowBody.children.length; }
+function addFlowRow(r){
+  var tr = document.createElement('tr');
+  tr.appendChild(cell('<span>'+r[0]+'</span>'));
+  tr.appendChild(cell('<div class="tier-cell"><span class="ge-symbol">≥</span>'+numInput(r[1],130)+'<span style="color:#909399;font-size:12px">即发放</span></div>'));
+  tr.appendChild(cell(numInput(r[2],90)));
+  tr.appendChild(cell('<div class="tier-cell">'+numInput(r[3],60)+'<span>倍</span></div>'));
+  flowBody.appendChild(tr);
+}
+flowRowsInit.forEach(addFlowRow);
+
+var currentMode = 'rank';
+
+function addCurrentTier(){
+  if (currentMode === 'flow') {
+    if (flowTierCount() >= MAX_TIERS) { alert('最多支持设置 '+MAX_TIERS+' 个档位'); return; }
+    var idx = flowTierCount();
+    var label = flowLabels[idx] || ('第'+(idx+1)+'档');
+    addFlowRow([label,'0','0.00','8.00']);
+  } else {
+    if (rankBody.children.length >= MAX_TIERS) { alert('最多支持设置 '+MAX_TIERS+' 个等级（九等奖）'); return; }
+    var idx = rankBody.children.length;
+    var label = rankLabels[idx] || ('第'+(idx+1)+'等奖');
+    addRankRow([label,'0','0','0.00','8.00']);
+  }
+}
+
+function removeLastTier(){
+  var body = currentMode === 'flow' ? flowBody : rankBody;
+  if (body.children.length <= 1) { alert('至少保留 1 档'); return; }
+  body.removeChild(body.lastElementChild);
+}
+
+function switchMode(mode){
+  currentMode = mode;
+  var isRank = mode === 'rank';
+  document.getElementById('rankTable').style.display = isRank ? '' : 'none';
+  document.getElementById('flowTable').style.display = isRank ? 'none' : '';
+}
+
+function toggleChangeBannerAdmin(){
+  var banner = document.getElementById('changeBannerAdmin');
+  var panel = document.getElementById('changeBannerPanelAdmin');
+  var arrow = document.getElementById('changeBannerArrowAdmin');
+  var open = panel.style.display === 'block';
+  panel.style.display = open ? 'none' : 'block';
+  banner.classList.toggle('open', !open);
+  arrow.textContent = '▸';
+}
+
+switchMode('rank');
+
+var MS_CATEGORY_OPTIONS = ['电子','视讯','捕鱼','彩票'];
+var MS_VENUE_BY_CATEGORY = {
+  '电子': ['PG电子','PP电子','MW电子','CQ9电子','JILI电子','YGG电子'],
+  '视讯': ['沙巴体育','皇冠体育','IM体育','DB视讯','索莱尔视讯','Choice视讯'],
+  '捕鱼': ['CQ9捕鱼'],
+  '彩票': ['JCP彩票','123GO','链游','自研棋牌','合约']
+};
+var MS_SUBGAMES_JCP = ['加拿大网盘996','加拿大百家乐','加拿大满赔率贵宾厅','香港六合彩','加拿大牛牛','加拿大2.8','加拿大4.2-4.6','加拿大5.0','加拿大网盘'];
+
+var msState = { category: [], venue: [], subgame: [] };
+var msLabel = { category: '游戏分类', venue: '游戏场馆', subgame: '子游戏' };
+var msPlaceholder = { category: '请选择游戏分类，可多选', venue: '请选择游戏场馆，可多选', subgame: '请选择子游戏，可多选' };
+
+function msCap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+
+function msAllVenues(){
+  var set = [];
+  Object.keys(MS_VENUE_BY_CATEGORY).forEach(function(c){
+    MS_VENUE_BY_CATEGORY[c].forEach(function(v){ if (set.indexOf(v) === -1) set.push(v); });
+  });
+  return set;
+}
+
+function msVenueOptions(){
+  if (msState.category.length === 0) return msAllVenues();
+  var set = [];
+  msState.category.forEach(function(c){
+    (MS_VENUE_BY_CATEGORY[c] || []).forEach(function(v){ if (set.indexOf(v) === -1) set.push(v); });
+  });
+  return set;
+}
+
+function msOptionsFor(key){
+  if (key === 'category') return MS_CATEGORY_OPTIONS;
+  if (key === 'venue') return msVenueOptions();
+  return MS_SUBGAMES_JCP;
+}
+
+function renderMsPanel(key){
+  var panel = document.getElementById('ms' + msCap(key) + 'Panel');
+  var options = msOptionsFor(key);
+  panel.innerHTML = '';
+  if (options.length === 0) {
+    var empty = document.createElement('div');
+    empty.className = 'ms-empty';
+    empty.textContent = '暂无可选项';
+    panel.appendChild(empty);
+    return;
+  }
+  var allSelected = options.every(function(o){ return msState[key].indexOf(o) !== -1; });
+  var allRow = document.createElement('div');
+  allRow.className = 'ms-option all-option' + (allSelected ? ' selected' : '');
+  allRow.textContent = '全选';
+  allRow.dataset.action = 'all';
+  panel.appendChild(allRow);
+
+  var divider = document.createElement('div');
+  divider.className = 'ms-divider';
+  panel.appendChild(divider);
+
+  options.forEach(function(o){
+    var row = document.createElement('div');
+    var sel = msState[key].indexOf(o) !== -1;
+    row.className = 'ms-option' + (sel ? ' selected' : '');
+    row.textContent = o;
+    row.dataset.value = o;
+    panel.appendChild(row);
+  });
+
+  panel.onclick = function(e){
+    var el = e.target.closest('.ms-option');
+    if (!el) return;
+    if (el.dataset.action === 'all') {
+      msToggleAll(key);
+    } else {
+      msToggleOption(key, el.dataset.value);
+    }
+    e.stopPropagation();
+  };
+}
+
+function msUpdateTrigger(key){
+  var container = document.getElementById('ms' + msCap(key) + 'Tags');
+  var vals = msState[key];
+  container.innerHTML = '';
+  if (vals.length === 0) {
+    var ph = document.createElement('span');
+    ph.className = 'ms-placeholder';
+    ph.textContent = msPlaceholder[key];
+    container.appendChild(ph);
+    return;
+  }
+  var tag = document.createElement('span');
+  tag.className = 'ms-tag';
+  var tagText = document.createElement('span');
+  tagText.className = 'ms-tag-text';
+  tagText.textContent = vals[0];
+  var tagClose = document.createElement('span');
+  tagClose.className = 'ms-tag-close';
+  tagClose.textContent = '×';
+  tagClose.dataset.remove = vals[0];
+  tag.appendChild(tagText);
+  tag.appendChild(tagClose);
+  container.appendChild(tag);
+  if (vals.length > 1) {
+    var more = document.createElement('span');
+    more.className = 'ms-tag-more';
+    more.textContent = '+' + (vals.length - 1);
+    container.appendChild(more);
+  }
+}
+
+function msBindTagRemoval(key){
+  var container = document.getElementById('ms' + msCap(key) + 'Tags');
+  container.onclick = function(e){
+    var closeEl = e.target.closest('.ms-tag-close');
+    if (!closeEl) return;
+    e.stopPropagation();
+    msToggleOption(key, closeEl.dataset.remove);
+  };
+}
+
+function msToggleOption(key, value){
+  var idx = msState[key].indexOf(value);
+  if (idx === -1) msState[key].push(value); else msState[key].splice(idx, 1);
+  msAfterChange(key);
+}
+
+function msToggleAll(key){
+  var options = msOptionsFor(key);
+  var allSelected = options.length > 0 && options.every(function(o){ return msState[key].indexOf(o) !== -1; });
+  msState[key] = allSelected ? [] : options.slice();
+  msAfterChange(key);
+}
+
+function msValidateCategory(){
+  var field = document.getElementById('msCategoryField');
+  var err = document.getElementById('msErrorText');
+  if (msState.category.length > 0) {
+    field.classList.remove('error');
+    err.style.display = 'none';
+  } else {
+    field.classList.add('error');
+    err.style.display = 'block';
+  }
+}
+
+function msUpdateSubgameVisibility(){
+  var show = msState.category.indexOf('彩票') !== -1;
+  var field = document.getElementById('msSubgameField');
+  field.style.display = show ? '' : 'none';
+  if (!show) {
+    msState.subgame = [];
+  }
+  renderMsPanel('subgame');
+  msUpdateTrigger('subgame');
+}
+
+function msAfterChange(key){
+  msUpdateTrigger(key);
+  renderMsPanel(key);
+  if (key === 'category') {
+    var vOptions = msVenueOptions();
+    msState.venue = msState.venue.filter(function(v){ return vOptions.indexOf(v) !== -1; });
+    renderMsPanel('venue');
+    msUpdateTrigger('venue');
+    msValidateCategory();
+    msUpdateSubgameVisibility();
+  } else if (key === 'venue') {
+    msUpdateSubgameVisibility();
+  }
+}
+
+function msCloseAllFields(){
+  document.querySelectorAll('.ms-field').forEach(function(f){ f.classList.remove('open'); });
+  msValidateCategory();
+}
+
+function toggleMs(key){
+  var fieldId = 'ms' + msCap(key) + 'Field';
+  var field = document.getElementById(fieldId);
+  var isOpen = field.classList.contains('open');
+  msCloseAllFields();
+  if (!isOpen) field.classList.add('open');
+}
+
+document.addEventListener('click', function(e){
+  if (!e.target.closest('.ms-field')) {
+    msCloseAllFields();
+  }
+});
+
+renderMsPanel('category');
+renderMsPanel('venue');
+msBindTagRemoval('category');
+msBindTagRemoval('venue');
+msBindTagRemoval('subgame');
+
+
+function toggleChangeBannerClient(){
+  var panel = document.getElementById('changeBannerPanelClient');
+  var arrow = document.getElementById('changeBannerArrowClient');
+  var open = panel.style.display === 'block';
+  panel.style.display = open ? 'none' : 'block';
+  arrow.style.transform = open ? 'rotate(0deg)' : 'rotate(90deg)';
+}
+
+</script>
 </body>
 </html>
