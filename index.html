@@ -212,6 +212,12 @@
         <li>「游戏分类」「游戏场馆」「子游戏」三个选择框并排展示在同一行；</li>
         <li>「游戏分类」「游戏场馆」「子游戏」均支持"全选"；</li>
       </ul>
+      <div style="font-weight:600;color:#8a5a2b;margin:10px 0 2px">三、消息通知文案随「活动计算规则」联动切换</div>
+      <ul>
+        <li>右侧「本期流水冠军激励文案」「前期流水冠军提示文案」原示例文案沿用了"按排名"模式的"榜单冠军"表述，按流水模式无排名概念，需替换为对应文案；</li>
+        <li>切换左侧「活动计算规则」单选项时，右侧这两处文案随之联动切换：选中「按排名」展示原文案（字段名不变）；选中「按流水」展示新文案，字段展示名同步改为「本期流水最高档激励文案」「前期流水最高档提示文案」，不再使用"冠军激励""冠军提示"的表述；</li>
+        <li>两套文案互斥展示，仅展示当前所选计算规则对应的一组。</li>
+      </ul>
     </div>
 
     <div class="columns">
@@ -308,10 +314,12 @@
         <div class="field"><label><span class="req">*</span>预算池枯竭页面提示</label><div class="control"><textarea disabled rows="2">很抱歉，排名彩金的奖池已全部领完！如有疑问，可联系客服，我们将竭诚为您解答！</textarea></div></div>
         <div class="field"><label><span class="req">*</span>成功提交申请页面提示</label><div class="control"><textarea disabled rows="2">恭喜您！申请已成功提交！我们将尽快审核，结果会在第一时间通知你，静候佳音，愿好运常伴！</textarea></div></div>
         <div class="field"><label><span class="req">*</span>本期流水未达门坎文案</label><div class="control"><textarea disabled rows="2">目前您在#{ActiveName}中的流水为#{EffectiveCapitalFlow}，距离#{LatestLevel}最低名次流水门槛仅差#{CapitalFlowDifference}，进度已非常接近目标。</textarea></div></div>
-        <div class="field"><label><span class="req">*</span>本期流水冠军激励文案</label><div class="control"><textarea disabled rows="3">太给力了！在#{ActiveName}中您凭借#{EffectiveCapitalFlow}流水，暂列榜单冠军，预计斩获彩金#{GiftMoney}。想确保最终夺冠、拿下奖励，还需持续努力喔~</textarea></div></div>
+        <div class="field" id="fieldChampionIncentiveRank"><label><span class="req">*</span>本期流水冠军激励文案</label><div class="control"><textarea disabled rows="3">太给力了！在#{ActiveName}中您凭借#{EffectiveCapitalFlow}流水，暂列榜单冠军，预计斩获彩金#{GiftMoney}。想确保最终夺冠、拿下奖励，还需持续努力喔~</textarea></div></div>
+        <div class="field" id="fieldChampionIncentiveFlow" style="display:none"><label><span class="req">*</span>本期流水最高档激励文案 <span class="new-tag">改</span></label><div class="control"><textarea disabled rows="3">太给力了！在#{ActiveName}中您的流水已达#{EffectiveCapitalFlow}，已解锁最高档位「#{LatestLevel}」，预计可获彩金#{GiftMoney}！持续加油，冲得越多，彩金越高喔~</textarea></div></div>
         <div class="field"><label><span class="req">*</span>本期流水奖项激励文案</label><div class="control"><textarea disabled rows="3">目前您在#{ActiveName}中的流水已达#{EffectiveCapitalFlow}，暂列榜单#{Ranking}，预计可获彩金#{GiftMoney}；距离#{LatestLevel}最低名次流水门槛仅差流水#{CapitalFlowDifference}。</textarea></div></div>
         <div class="field"><label><span class="req">*</span>彩金申领期外提示文案</label><div class="control"><textarea disabled rows="2">会员您好！新的#{ActiveName} 彩金申领尚未开始，当前阶段重点是要积累更多有效流水哦~</textarea></div></div>
-        <div class="field"><label><span class="req">*</span>前期流水冠军提示文案</label><div class="control"><textarea disabled rows="2">恭喜您在前期赛事中斩获冠军， 成功将#{GiftMoney}彩金收入囊中。</textarea></div></div>
+        <div class="field" id="fieldChampionNoticeRank"><label><span class="req">*</span>前期流水冠军提示文案</label><div class="control"><textarea disabled rows="2">恭喜您在前期赛事中斩获冠军， 成功将#{GiftMoney}彩金收入囊中。</textarea></div></div>
+        <div class="field" id="fieldChampionNoticeFlow" style="display:none"><label><span class="req">*</span>前期流水最高档提示文案 <span class="new-tag">改</span></label><div class="control"><textarea disabled rows="2">恭喜您在前期#{ActiveName}中流水已达最高档位「#{LatestLevel}」，成功将#{GiftMoney}彩金收入囊中。</textarea></div></div>
         <div class="field"><label><span class="req">*</span>前期获奖会员提示文案</label><div class="control"><textarea disabled rows="2">恭喜您在前期赛事中您以#{Ranking}的成绩斩获#{GiftMoney}彩金。</textarea></div></div>
         <div class="field"><label><span class="req">*</span>前期未发彩金提示文案</label><div class="control"><textarea disabled rows="2">在前期赛事中您的流水为#{EffectiveCapitalFlow}未能达到活动设定的基准流水标准，确实会让人略感遗憾。</textarea></div></div>
         <div class="field"><label><span class="req">*</span>彩金申领限时提示</label><div class="control"><textarea disabled rows="1">当前活动正在统计中，请于北京时间 00:30 后领取。</textarea></div></div>
@@ -587,6 +595,10 @@ function switchMode(mode){
   var isRank = mode === 'rank';
   document.getElementById('rankTable').style.display = isRank ? '' : 'none';
   document.getElementById('flowTable').style.display = isRank ? 'none' : '';
+  document.getElementById('fieldChampionIncentiveRank').style.display = isRank ? '' : 'none';
+  document.getElementById('fieldChampionIncentiveFlow').style.display = isRank ? 'none' : '';
+  document.getElementById('fieldChampionNoticeRank').style.display = isRank ? '' : 'none';
+  document.getElementById('fieldChampionNoticeFlow').style.display = isRank ? 'none' : '';
 }
 
 function toggleChangeBannerAdmin(){
